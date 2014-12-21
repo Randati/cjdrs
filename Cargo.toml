@@ -9,12 +9,12 @@ name = "cjdrs"
 path = "src/cjdrs/lib.rs"
 
 [dependencies.tuntap]
-#git = "https://github.com/randati/tuntap-rust.git"
-path = "../tuntap-rust"
+git = "https://github.com/Randati/tuntap-rust.git"
+#path = "../tuntap-rust"
 
 [dependencies.rust-crypto]
 git = "https://github.com/DaGenix/rust-crypto.git"
 
 [dependencies.mio]
-#git = "https://github.com/carllerche/mio.git"
-path = "../mio"
+git = "https://github.com/Randati/mio.git"
+#path = "../mio"
