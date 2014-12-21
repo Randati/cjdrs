@@ -2,9 +2,9 @@
 name = "cjdrs"
 version = "0.0.1"
 dependencies = [
- "mio 0.0.1",
+ "mio 0.0.1 (git+https://github.com/Randati/mio.git)",
  "rust-crypto 0.2.2 (git+https://github.com/DaGenix/rust-crypto.git)",
- "tuntap 0.0.1",
+ "tuntap 0.0.1 (git+https://github.com/Randati/tuntap-rust.git)",
 ]
 
 [[package]]
@@ -15,14 +15,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [[package]]
 name = "mio"
 version = "0.0.1"
+source = "git+https://github.com/Randati/mio.git#a761e94965b4f463cfac299f67cc5377495b80b5"
 dependencies = [
- "nix 0.1.0",
+ "nix 0.1.0 (git+https://github.com/vberger/nix-rust.git?ref=078fff6bc3a9a14ee11ec979397a193d4468ca90)",
  "time 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
 name = "nix"
 version = "0.1.0"
+source = "git+https://github.com/vberger/nix-rust.git?ref=078fff6bc3a9a14ee11ec979397a193d4468ca90#078fff6bc3a9a14ee11ec979397a193d4468ca90"
 
 [[package]]
 name = "rust-crypto"
@@ -43,4 +45,5 @@ dependencies = [
 [[package]]
 name = "tuntap"
 version = "0.0.1"
+source = "git+https://github.com/Randati/tuntap-rust.git#2e869735c35a163d61d1aee1db797bd4150615fb"
 
