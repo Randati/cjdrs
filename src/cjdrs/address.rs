@@ -9,22 +9,26 @@ pub struct Address {
 }
 
 impl Address {
+	pub fn is_valid(slice: &[u8]) -> bool {
+		assert_eq!(slice.len(), 16);
+		slice[0] == 0xFC
+	}
+
 	pub fn from_bytes(bytes: &[u8, ..16]) -> Option<Address> {
-		match bytes[0] {
-			0xFC => Some(Address { bytes: *bytes }),
-			_    => None
+		if Address::is_valid(bytes.as_slice()) {
+			Some(Address { bytes: *bytes })
+		} else {
+			None
 		}
 	}
 
 	pub fn from_slice(slice: &[u8]) -> Option<Address> {
-		assert_eq!(slice.len(), 16);
-		match slice[0] {
-			0xFC => {
-				let mut bytes = [0u8, ..16];
-				copy_memory(&mut bytes, slice);
-				Some(Address { bytes: bytes })
-			},
-			_ => None
+		if Address::is_valid(slice) {
+			let mut bytes = [0u8, ..16];
+			copy_memory(&mut bytes, slice);
+			Some(Address { bytes: bytes })
+		} else {
+			None
 		}
 	}
 

@@ -39,8 +39,17 @@ impl mio::Handler<uint, ()> for EventHandler {
 	fn readable(&mut self, _event_loop: &mut mio::EventLoop<uint, ()>,
 	            token: mio::Token, _hint: mio::event::ReadHint) {
 
+		let mut buffer = [0u8, ..1500];
+
 		match token {
-			TUN_INCOMING => self.tun_interface.handle_incoming_packet(),
+			TUN_INCOMING => {
+				match self.tun_interface.read_incoming_packet(&mut buffer) {
+					Ok(ducttape_packet) => {
+						println!("Handle packet");
+					},
+					Err(e) => println!("Couldn't parse packet: {}", e)
+				}
+			},
 			_ => panic!("Unknown event type {}", token)
 		};
 	}
