@@ -1,20 +1,28 @@
+extern crate crypto;
+
 use std::fmt;
 use std::mem;
 use std::num::Int;
 use std::slice::bytes::copy_memory;
+use self::crypto::sha2::Sha512;
+use self::crypto::digest::Digest;
+use PublicKey;
+
+const ADDRESS_SIZE: uint = 16;
+
 
 #[deriving(Copy, Clone, Eq, PartialEq, Hash)]
 pub struct Address {
-	bytes: [u8, ..16]
+	bytes: [u8, ..ADDRESS_SIZE]
 }
 
 impl Address {
 	pub fn is_valid(slice: &[u8]) -> bool {
-		assert_eq!(slice.len(), 16);
+		assert_eq!(slice.len(), ADDRESS_SIZE);
 		slice[0] == 0xFC
 	}
 
-	pub fn from_bytes(bytes: &[u8, ..16]) -> Option<Address> {
+	pub fn from_bytes(bytes: &[u8, ..ADDRESS_SIZE]) -> Option<Address> {
 		if Address::is_valid(bytes.as_slice()) {
 			Some(Address { bytes: *bytes })
 		} else {
@@ -24,12 +32,18 @@ impl Address {
 
 	pub fn from_slice(slice: &[u8]) -> Option<Address> {
 		if Address::is_valid(slice) {
-			let mut bytes = [0u8, ..16];
+			let mut bytes = [0u8, ..ADDRESS_SIZE];
 			copy_memory(&mut bytes, slice);
 			Some(Address { bytes: bytes })
 		} else {
 			None
 		}
+	}
+
+	pub fn from_public_key(public_key: &PublicKey) -> Option<Address> {
+		let double_sha = sha512(&sha512(public_key.as_slice()));
+		let raw_address = double_sha.slice_to(ADDRESS_SIZE);
+		Address::from_slice(raw_address)
 	}
 
 	pub fn as_slice(&self) -> &[u8] {
@@ -132,10 +146,22 @@ impl fmt::Show for Address {
 }
 
 
+fn sha512(input: &[u8]) -> [u8, ..64] {
+	let mut hasher = Sha512::new();
+	hasher.input(input);
+
+	let mut output = [0u8, ..64];
+	hasher.result(output.as_mut_slice());
+	output
+}
+
+
 #[cfg(test)]
 mod tests {
 	use address::Address;
+	use address::sha512;
 
+	
 	#[test]
 	fn test_as_u64_be() {
 		let address = Address::from_bytes(&[
@@ -240,5 +266,33 @@ mod tests {
 		let c = Address::from_bytes(&[0xfc, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01]).unwrap();
 		let d = Address::from_bytes(&[0xfc, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]).unwrap();
 		assert_eq!(Address::xor_compare((&a, &b), (&c, &d)), Less);
+	}
+
+	#[test]
+	fn test_sha512() {
+		let input = [];
+		let hash = [
+			0xcf, 0x83, 0xe1, 0x35, 0x7e, 0xef, 0xb8, 0xbd,
+			0xf1, 0x54, 0x28, 0x50, 0xd6, 0x6d, 0x80, 0x07,
+			0xd6, 0x20, 0xe4, 0x05, 0x0b, 0x57, 0x15, 0xdc,
+			0x83, 0xf4, 0xa9, 0x21, 0xd3, 0x6c, 0xe9, 0xce,
+			0x47, 0xd0, 0xd1, 0x3c, 0x5d, 0x85, 0xf2, 0xb0,
+			0xff, 0x83, 0x18, 0xd2, 0x87, 0x7e, 0xec, 0x2f,
+			0x63, 0xb9, 0x31, 0xbd, 0x47, 0x41, 0x7a, 0x81,
+			0xa5, 0x38, 0x32, 0x7a, 0xf9, 0x27, 0xda, 0x3e];
+		assert_eq!(sha512(input.as_slice()).as_slice(), hash.as_slice());
+
+
+		let input = "The quick brown fox jumps over the lazy dog".to_string().into_bytes();
+		let hash = [
+			0x07, 0xe5, 0x47, 0xd9, 0x58, 0x6f, 0x6a, 0x73,
+			0xf7, 0x3f, 0xba, 0xc0, 0x43, 0x5e, 0xd7, 0x69,
+			0x51, 0x21, 0x8f, 0xb7, 0xd0, 0xc8, 0xd7, 0x88,
+			0xa3, 0x09, 0xd7, 0x85, 0x43, 0x6b, 0xbb, 0x64,
+			0x2e, 0x93, 0xa2, 0x52, 0xa9, 0x54, 0xf2, 0x39,
+			0x12, 0x54, 0x7d, 0x1e, 0x8a, 0x3b, 0x5e, 0xd6,
+			0xe1, 0xbf, 0xd7, 0x09, 0x78, 0x21, 0x23, 0x3f,
+			0xa0, 0x53, 0x8f, 0x3d, 0xb8, 0x54, 0xfe, 0xe6];
+		assert_eq!(sha512(input.as_slice()).as_slice(), hash.as_slice());
 	}
 }

@@ -8,8 +8,8 @@ const TUN_HEADER_LENGTH: uint = 4;
 #[deriving(Copy, Clone, Eq, PartialEq)]
 #[repr(u16)]
 enum TunProtocolType {
-	IPv4  = 0x0800,
-	IPv6  = 0x86DD,
+	IPv4 = 0x0800,
+	IPv6 = 0x86DD,
 }
 
 
