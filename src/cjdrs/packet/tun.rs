@@ -9,7 +9,7 @@ const TUN_HEADER_LENGTH: uint = 4;
 #[repr(u16)]
 enum TunProtocolType {
 	IPv4  = 0x0800,
-	IPv6  = 0x08DD,
+	IPv6  = 0x86DD,
 }
 
 
@@ -40,13 +40,19 @@ pub struct TunPacket<'a> {
 
 impl<'a> TunPacket<'a> {
 	pub fn from_buffer(buffer: &[u8]) -> ParseResult<TunPacket> {
-		if buffer.len() >= TUN_HEADER_LENGTH {
-			Ok(TunPacket {
-				header: unsafe { mem::transmute(buffer.as_ptr()) },
-				data:   buffer.slice_from(TUN_HEADER_LENGTH)
-			})
-		} else {
-			Err("Tun packet too short")
+		if buffer.len() < TUN_HEADER_LENGTH {
+			return Err("Tun packet too short");
 		}
+
+		let header: &TunHeader = unsafe { mem::transmute(buffer.as_ptr()) };
+
+		if !header.is_ipv6() {
+			return Err("Tun packet not IPv6");
+		}
+
+		Ok(TunPacket {
+			header: header,
+			data:   buffer.slice_from(TUN_HEADER_LENGTH)
+		})
 	}
 }
