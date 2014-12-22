@@ -5,6 +5,8 @@ pub use route::Route;
 pub use router::Router;
 pub use tun_interface::TunInterface;
 
+pub mod packet;
+
 mod address;
 mod event_handler;
 mod identity;

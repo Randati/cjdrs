@@ -24,7 +24,7 @@ impl EventHandler {
 		if let Err(e) = event_handler.register_handlers(event_loop) {
 			panic!("Couldn't register event handlers: {}", e);
 		}
-		
+
 		event_handler
 	}
 
@@ -42,6 +42,6 @@ impl mio::Handler<uint, ()> for EventHandler {
 		match token {
 			TUN_INCOMING => self.tun_interface.handle_incoming_packet(),
 			_ => panic!("Unknown event type {}", token)
-		}
+		};
 	}
 }

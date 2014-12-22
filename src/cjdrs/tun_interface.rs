@@ -2,12 +2,11 @@ extern crate tuntap;
 extern crate libc;
 extern crate mio;
 
-use std::mem;
-use std::num::Int;
 use std::os::unix::prelude::AsRawFd;
 use self::mio::IoReader;
 use self::tuntap::{TunTap, Tun};
 use Address;
+use packet::{ TunPacket, IPv6Packet, DucttapePacket, ParseResult };
 
 
 const BUFFER_SIZE: uint = 1500;
@@ -37,37 +36,21 @@ impl TunInterface {
 		self.tun.get_name()
 	}
 
-	pub fn handle_incoming_packet(&mut self) {
-		let mut buffer = [0u8, ..1500];
-		let tun_packet = self.tun.read(&mut buffer).ok().expect("Reading did not succeed");
+	pub fn handle_incoming_packet(&mut self) -> ParseResult<IPv6Packet> {
+		let mut buffer = [0u8, ..BUFFER_SIZE];
+		let tun_data = self.tun.read(&mut buffer).ok().expect("Reading did not succeed");
 
 		// TODO Check correct header
 
-		// TUN header
-		if tun_packet.len() < TUN_HEADER_LENGTH + IPV6_HEADER_LENGTH {
-			panic!("Packet too small");
-		}
+		let tun_packet = try!(TunPacket::from_buffer(tun_data));
+		let ipv6_packet = try!(IPv6Packet::from_buffer(tun_packet.data));
 
-
-		// IPv6 header
-		let ipv6_packet = tun_packet.slice_from(TUN_HEADER_LENGTH);
-		let ipv6_header: &IPv6Header = unsafe {
-			mem::transmute(ipv6_packet.slice_to(IPV6_HEADER_LENGTH).as_ptr())
-		};
+		let source = Address::from_bytes(&ipv6_packet.header.source_addr).unwrap();
+		let destination = Address::from_bytes(&ipv6_packet.header.destination_addr).unwrap();
 		
-		let source = Address::from_bytes(&ipv6_header.source_addr).unwrap();
-		let destination = Address::from_bytes(&ipv6_header.destination_addr).unwrap();
-		let payload_length = Int::from_be(ipv6_header.payload_length_be) as uint;
-
-
-		// Packet payload
-		if ipv6_packet.len() != IPV6_HEADER_LENGTH + payload_length {
-			panic!("Packet is lying about the length!");
-		}
-		let payload = ipv6_packet.slice_from(IPV6_HEADER_LENGTH);
-
-
 		println!("{} -> {}", source, destination);
+		
+		let ducttape_packet = try!(DucttapePacket::from_buffer(ipv6_packet.data));
 
 		// route = get_route()
 		// next_node = get_next_node(route)
@@ -76,31 +59,7 @@ impl TunInterface {
 		// else
 		//		crypto auth stuff
 		//		interface.send_message()
+
+		Err("Not implemented")
 	}
 }
-
-
-
-#[repr(packed)]
-struct IPv6Header {
-	version_class_flow: u32,
-	payload_length_be: u16,
-	next_header: u8,
-	hop_limit: u8,
-	source_addr: [u8, ..16],
-	destination_addr: [u8, ..16]
-}
-
-#[repr(packed)]
-struct DucttapeHeader {
-	session_layer: u32,
-	_switch_header: u32,
-	_ipv6_header: u32,
-	next_hop_receive_handle: u32,
-	receive_handle: u32,
-	switch_label: u64
-}
-
-const TUN_HEADER_LENGTH: uint = 4;
-const IPV6_HEADER_LENGTH: uint = 40;
-
