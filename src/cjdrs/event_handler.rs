@@ -40,7 +40,7 @@ impl mio::Handler<uint, ()> for EventHandler {
 	            token: mio::Token, _hint: mio::event::ReadHint) {
 
 		match token {
-			TUN_INCOMING => self.tun_interface.read_incoming_packet(),
+			TUN_INCOMING => self.tun_interface.handle_incoming_packet(),
 			_ => panic!("Unknown event type {}", token)
 		}
 	}
