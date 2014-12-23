@@ -12,3 +12,17 @@ pub trait PacketData<'a> {
 	fn from_buffer(buffer: &'a [u8]) -> ParseResult<Self>;
 	fn as_slice(&self) -> &'a [u8];
 }
+
+
+pub struct RawPacket<'a>(&'a [u8]);
+
+impl<'a> PacketData<'a> for RawPacket<'a> {
+	fn from_buffer(buffer: &'a [u8]) -> ParseResult<RawPacket> {
+		Ok(RawPacket(buffer))
+	}
+
+	fn as_slice(&self) -> &'a [u8] {
+		let &RawPacket(slice) = self;
+		slice
+	}
+}

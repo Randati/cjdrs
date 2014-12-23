@@ -1,5 +1,4 @@
 extern crate cjdrs;
-extern crate tuntap;
 extern crate mio;
 
 #[cfg(not(test))] use std::rand::OsRng;

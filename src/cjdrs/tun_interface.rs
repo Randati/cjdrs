@@ -1,12 +1,11 @@
 extern crate tuntap;
-extern crate libc;
 extern crate mio;
 
 use std::os::unix::prelude::AsRawFd;
 use self::mio::IoReader;
 use self::tuntap::{TunTap, Tun};
 use Address;
-use packet::{TunPacket, IPv6Packet, DucttapePacket, ParseResult, PacketData};
+use packet::{TunPacket, IPv6Packet, RawPacket, ParseResult, PacketData};
 
 
 pub struct TunInterface {
@@ -34,7 +33,7 @@ impl TunInterface {
 	}
 
 	pub fn read_incoming_packet<'a>(&'a mut self, empty_buffer: &'a mut [u8])
-	       -> ParseResult<TunPacket<IPv6Packet<DucttapePacket>>> {
+	       -> ParseResult<TunPacket<IPv6Packet<RawPacket>>> {
 		let tun_data = self.tun.read(empty_buffer).ok().expect("Reading did not succeed");
 		PacketData::from_buffer(tun_data)
 	}
