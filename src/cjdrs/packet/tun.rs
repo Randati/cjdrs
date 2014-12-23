@@ -1,6 +1,6 @@
 use std::mem;
 use std::num::Int;
-use packet::ParseResult;
+use packet::{ParseResult, PacketData};
 
 const TUN_HEADER_LENGTH: uint = 4;
 
@@ -15,31 +15,33 @@ enum TunProtocolType {
 
 #[deriving(Copy, Clone, Eq, PartialEq)]
 #[repr(packed)]
-pub struct TunHeader {
-	pub _unused: u16,
-	pub protocol_type: u16
+struct TunHeader {
+	_unused: u16,
+	protocol_type: u16
 }
 
-// TODO Reduce duplicated code
 impl TunHeader {
-	pub fn is_ipv4(&self) -> bool {
-		Int::from_be(self.protocol_type) == TunProtocolType::IPv4 as u16
-	}
-
-	pub fn is_ipv6(&self) -> bool {
+	fn is_ipv6(&self) -> bool {
 		Int::from_be(self.protocol_type) == TunProtocolType::IPv6 as u16
 	}
 }
 
 
 #[deriving(Copy, Clone, Eq, PartialEq)]
-pub struct TunPacket<'a> {
-	pub header: &'a TunHeader,
-	pub data: &'a [u8]
+pub struct TunPacket<'a, D: PacketData<'a>> {
+	slice: &'a [u8],
+	header: &'a TunHeader,
+	data: D
 }
 
-impl<'a> TunPacket<'a> {
-	pub fn from_buffer(buffer: &[u8]) -> ParseResult<TunPacket> {
+impl<'a, D: PacketData<'a>> TunPacket<'a, D> {
+	pub fn get_data(&self) -> &D {
+		&self.data
+	}
+}
+
+impl<'a, D: PacketData<'a>> PacketData<'a> for TunPacket<'a, D> {
+	fn from_buffer(buffer: &'a [u8]) -> ParseResult<TunPacket<'a, D>> {
 		if buffer.len() < TUN_HEADER_LENGTH {
 			return Err("Tun packet too short");
 		}
@@ -50,9 +52,16 @@ impl<'a> TunPacket<'a> {
 			return Err("Tun packet not IPv6");
 		}
 
+		let data = try!(PacketData::from_buffer(buffer.slice_from(TUN_HEADER_LENGTH)));
+
 		Ok(TunPacket {
+			slice: buffer,
 			header: header,
-			data:   buffer.slice_from(TUN_HEADER_LENGTH)
+			data: data
 		})
+	}
+
+	fn as_slice(&self) -> &'a [u8] {
+		self.slice
 	}
 }

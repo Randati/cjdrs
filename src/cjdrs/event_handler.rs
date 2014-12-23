@@ -1,7 +1,7 @@
 extern crate mio;
 
-use TunInterface;
 use Router;
+use TunInterface;
 
 const TUN_INCOMING: mio::Token = mio::Token(1);
 
@@ -44,8 +44,10 @@ impl mio::Handler<uint, ()> for EventHandler {
 		match token {
 			TUN_INCOMING => {
 				match self.tun_interface.read_incoming_packet(&mut buffer) {
-					Ok(ducttape_packet) => {
-						println!("Handle packet");
+					Ok(tun_packet) => {
+						let ipv6_packet = &tun_packet.get_data();
+						let destination = ipv6_packet.get_destination();
+						println!("Tun -> {}", destination);
 					},
 					Err(e) => println!("Couldn't parse packet: {}", e)
 				}
