@@ -8,6 +8,10 @@ license = "MIT"
 name = "cjdrs"
 path = "src/cjdrs/lib.rs"
 
+[[bin]]
+name = "cjdrs"
+doc = false
+
 [dependencies.tuntap]
 git = "https://github.com/Randati/tuntap-rust.git"
 #path = "../tuntap-rust"
