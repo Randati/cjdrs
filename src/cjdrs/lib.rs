@@ -1,3 +1,5 @@
+#![feature(globs)]
+
 pub use address::Address;
 pub use event_handler::EventHandler;
 pub use identity::{
@@ -11,6 +13,7 @@ pub use tun_interface::TunInterface;
 
 pub mod packet;
 
+mod encoding_scheme;
 mod address;
 mod event_handler;
 mod identity;
