@@ -1,6 +1,6 @@
 
 pub fn bits_used_for_label(label: u64) -> u8 {
-	if label & 0b0000_1111 == 1 {
+	if label & 0b1111 == 0b0001 {
 		4
 	} else {
 		8

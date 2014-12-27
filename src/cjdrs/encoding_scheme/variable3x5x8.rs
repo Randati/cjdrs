@@ -1,19 +1,19 @@
 
 pub fn bits_used_for_label(label: u64) -> u8 {
-	if label & 0b01 != 0 {
-		4
+	if label & 0b1 != 0 {
+		3 + 1
 	} else if label & 0b10 != 0 {
-		7
+		5 + 2
 	} else {
-		10
+		8 + 2
 	}
 }
 
 pub fn bits_used_for_number(number: u32) -> u8 {
 	match number {
-		n if n <  8 => 4,
-		n if n < 33 => 7,
-		_           => 10
+		n if n <  8 => 3 + 1,
+		n if n < 33 => 5 + 2,
+		_           => 8 + 2
 	}
 }
 

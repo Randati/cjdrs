@@ -1,17 +1,17 @@
 
 pub fn bits_used_for_label(label: u64) -> u8 {
-	if label & 1 != 0 {
-		5
+	if label & 0b1 != 0 {
+		4 + 1
 	} else {
-		9
+		8 + 1
 	}
 }
 
 pub fn bits_used_for_number(number: u32) -> u8 {
 	if number < 15 {
-		5
+		4 + 1
 	} else {
-		9
+		8 + 1
 	}
 }
 
