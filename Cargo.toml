@@ -20,5 +20,5 @@ git = "https://github.com/Randati/tuntap-rust.git"
 git = "https://github.com/DaGenix/rust-crypto.git"
 
 [dependencies.mio]
-git = "https://github.com/Randati/mio.git"
-#path = "../mio"
+git = "https://github.com/reem/mio.git"
+branch = "export-IoDesc"
