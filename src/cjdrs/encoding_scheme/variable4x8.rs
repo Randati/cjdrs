@@ -22,12 +22,16 @@ pub fn compress(number: u32) -> u64 {
 
 	match bits_used_for_number(number) {
 		5 => {
-			let number = if number == 0 { 1 } else { number };
-			((number << 1) | 0b0_0001) as u64
+			match number {
+				0 => 0b0_0011,
+				n => ((n << 1) | 0b1) as u64
+			}
 		},
 		9 => {
-			let number = if number == 0 { 0 } else { number - 1 };
-			(number << 1) as u64
+			match number {
+				0 => 0b0_0000_0000,
+				n => ((n - 1) << 1) as u64
+			}
 		},
 		_ => panic!()
 	}
@@ -40,12 +44,16 @@ pub fn decompress(label: u64) -> u32 {
 
 	match bits_used_for_label(label) {
 		5 => {
-			let label = (label >> 1) & 0b1111;
-			if label == 1 { 0 } else { label as u32 }
+			match (label >> 1) & 0b1111 {
+				0b0001 => 0,
+				n      => n as u32
+			}
 		},
 		9 => {
-			let label = (label >> 1) & 0b1111_1111;
-			if label == 0 { 0 } else { (label + 1) as u32 }
+			match (label >> 1) & 0b1111_1111 {
+				0b0000_0000 => 0,
+				n           => (n + 1) as u32
+			}
 		},
 		_ => panic!()
 	}

@@ -10,12 +10,10 @@ pub fn bits_used_for_label(label: u64) -> u8 {
 }
 
 pub fn bits_used_for_number(number: u32) -> u8 {
-	if number < 8 {
-		4
-	} else if number < 33 {
-		7
-	} else {
-		10
+	match number {
+		n if n <  8 => 4,
+		n if n < 33 => 7,
+		_           => 10
 	}
 }
 
@@ -26,24 +24,21 @@ pub fn compress(number: u32) -> u64 {
 
 	match bits_used_for_number(number) {
 		4 => {
-			if number == 0 {
-				3
-			} else {
-				((number << 1) | 0b1) as u64
+			match number {
+				0 => 0b0011,
+				n => ((n << 1) | 0b1) as u64
 			}
 		},
 		7 => {
-			if number == 0 {
-				2
-			} else {
-				(((number - 1) << 2) | 0b10) as u64
+			match number {
+				0 => 0b000_0010,
+				n => (((n - 1) << 2) | 0b10) as u64
 			}
 		},
 		10 => {
-			if number == 0 {
-				0
-			} else {
-				((number - 1) << 2) as u64
+			match number {
+				0 => 0b00_0000_0000,
+				n => ((n - 1) << 2) as u64
 			}
 		},
 		_ => panic!()
@@ -53,19 +48,23 @@ pub fn compress(number: u32) -> u64 {
 pub fn decompress(label: u64) -> u32 {
 	match bits_used_for_label(label) {
 		4 => {
-			match (label >> 1) & 0b0111 {
-				0 => 1,
-				1 => 0,
-				n => n as u32
+			match (label >> 1) & 0b111 {
+				0b000 => 1,
+				0b001 => 0,
+				n     => n as u32
 			}
 		},
 		7 => {
-			let label = (label >> 2) & 0b001_1111;
-			if label == 0 { 0 } else { (label + 1) as u32 }
+			match (label >> 2) & 0b1_1111 {
+				0b0_0000 => 0,
+				n        => (n + 1) as u32
+			}
 		},
 		10 => {
-			let label = (label >> 2) & 0b00_1111_1111;
-			if label == 0 { 0 } else { (label + 1) as u32 }
+			match (label >> 2) & 0b1111_1111 {
+				0b0000_0000 => 0,
+				n           => (n + 1) as u32
+			}
 		},
 		_ => panic!()
 	}
