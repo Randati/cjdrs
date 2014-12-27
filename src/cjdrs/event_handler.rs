@@ -30,7 +30,7 @@ impl EventHandler {
 
 	pub fn register_handlers(&self, event_loop: &mut mio::EventLoop<uint, ()>
 	                        ) -> mio::MioResult<()> {
-		try!(event_loop.register(&self.tun_interface.reader, TUN_INCOMING));
+		try!(event_loop.register(&self.tun_interface, TUN_INCOMING));
 		Ok(())
 	}
 }

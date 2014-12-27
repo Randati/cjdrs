@@ -2,7 +2,7 @@
 name = "cjdrs"
 version = "0.0.1"
 dependencies = [
- "mio 0.0.1 (git+https://github.com/Randati/mio.git)",
+ "mio 0.0.1 (git+https://github.com/reem/mio.git?ref=export-IoDesc)",
  "rust-crypto 0.2.5 (git+https://github.com/DaGenix/rust-crypto.git)",
  "tuntap 0.0.1 (git+https://github.com/Randati/tuntap-rust.git)",
 ]
@@ -23,16 +23,17 @@ dependencies = [
 [[package]]
 name = "mio"
 version = "0.0.1"
-source = "git+https://github.com/Randati/mio.git#a761e94965b4f463cfac299f67cc5377495b80b5"
+source = "git+https://github.com/reem/mio.git?ref=export-IoDesc#e0de91972a9599c73ce86bc504ad7bbd9dbb62de"
 dependencies = [
- "nix 0.1.0 (git+https://github.com/vberger/nix-rust.git?ref=078fff6bc3a9a14ee11ec979397a193d4468ca90)",
+ "log 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "nix 0.1.0 (git+https://github.com/carllerche/nix-rust)",
  "time 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
 name = "nix"
 version = "0.1.0"
-source = "git+https://github.com/vberger/nix-rust.git?ref=078fff6bc3a9a14ee11ec979397a193d4468ca90#078fff6bc3a9a14ee11ec979397a193d4468ca90"
+source = "git+https://github.com/carllerche/nix-rust#898674f93c2a4df6a8e2c9e07ed509ddb3d4e866"
 
 [[package]]
 name = "regex"
