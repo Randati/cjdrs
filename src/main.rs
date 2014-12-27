@@ -3,7 +3,7 @@ extern crate mio;
 
 #[cfg(not(test))] use std::rand::OsRng;
 #[cfg(not(test))] use cjdrs::PrivateIdentity;
-#[cfg(not(test))] use cjdrs::TunInterface;
+#[cfg(not(test))] use cjdrs::interface;
 #[cfg(not(test))] use cjdrs::Router;
 #[cfg(not(test))] use cjdrs::EventHandler;
 
@@ -21,8 +21,11 @@ fn main() {
 	println!("Generated identity: {}", identity.address);
 
 	
-	let tun_interface = TunInterface::new(&identity.address);
+	let tun_interface = interface::Tun::new(&identity.address);
 	println!("Opened tun device '{}'", tun_interface.get_name());
+
+	let udp_interface = interface::Udp::create();
+
 
 	let router = Router::new(&identity.address);
 
@@ -30,6 +33,7 @@ fn main() {
 	let mut mio_loop: mio::EventLoop<uint, ()> = mio::EventLoop::new().unwrap();
 	let event_handler = EventHandler::new(&mut mio_loop,
 		tun_interface,
+		udp_interface,
 		router);
 	
 	if let Err(e) = mio_loop.run(event_handler) {
