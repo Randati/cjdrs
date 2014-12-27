@@ -67,7 +67,7 @@ pub fn decompress(label: u64) -> u32 {
 			let label = (label >> 2) & 0b00_1111_1111;
 			if label == 0 { 0 } else { (label + 1) as u32 }
 		},
-		_ => panic!(false)
+		_ => panic!()
 	}
 }
 

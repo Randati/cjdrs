@@ -18,19 +18,14 @@ pub fn bits_used_for_number(number: u32) -> u8 {
 pub fn compress(number: u32) -> u64 {
 	assert!(number <= 0b1111_0000);
 
-	match number {
-		0b0000_0001 => 0b0000_0001,
-		0b1111_0000 => 0b0001_0000,
-		_ => {
-			let low  =  number & 0b0000_1111;
-			let high = (number & 0b1111_0000) >> 4;
+	let low  =  number & 0b0000_1111;
+	let high = (number & 0b1111_0000) >> 4;
 
-			if high == 0 {
-				((low << 4) | high) as u64
-			} else {
-				((low << 4) | (high + 1)) as u64
-			}
-		}
+	match (high, low) {
+		(0b0000, 0b0001) => 0b0000_0001,
+		(0b1111, 0b0000) => 0b0001_0000,
+		(0b0000,      _) => (low << 4) as u64,
+		(     _,      _) => ((low << 4) | (high + 1)) as u64
 	}
 }
 
@@ -43,13 +38,8 @@ pub fn decompress(label: u64) -> u32 {
 	match (high, low) {
 		(     _, 0b0001) => 0b0000_0001,
 		(0b0001, 0b0000) => 0b1111_0000,
-		_ => {
-			if low == 0 {
-				((low << 4) | high) as u32
-			} else {
-				(((low - 1) << 4) | high) as u32
-			}
-		}
+		(     _, 0b0000) => high as u32,
+		(     _,      _) => (((low - 1) << 4) | high) as u32
 	}
 }
 
