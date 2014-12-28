@@ -15,6 +15,7 @@ pub use router::Router;
 pub mod encoding_scheme;
 pub mod interface;
 pub mod packet;
+pub mod util;
 
 mod address;
 mod event_handler;

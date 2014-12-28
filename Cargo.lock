@@ -4,6 +4,7 @@ version = "0.0.1"
 dependencies = [
  "mio 0.0.1 (git+https://github.com/reem/mio.git?ref=export-IoDesc)",
  "rust-crypto 0.2.5 (git+https://github.com/DaGenix/rust-crypto.git)",
+ "rustc-serialize 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "tuntap 0.0.1 (git+https://github.com/Randati/tuntap-rust.git)",
 ]
 

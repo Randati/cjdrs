@@ -12,6 +12,9 @@ path = "src/cjdrs/lib.rs"
 name = "cjdrs"
 doc = false
 
+[dependencies]
+rustc-serialize = "*"
+
 [dependencies.tuntap]
 git = "https://github.com/Randati/tuntap-rust.git"
 #path = "../tuntap-rust"

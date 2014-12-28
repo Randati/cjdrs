@@ -1,8 +1,11 @@
 extern crate crypto;
+extern crate "rustc-serialize" as serialize;
 
 use std::rand::Rng;
 use self::crypto::curve25519::curve25519_base;
+use self::serialize::hex::{FromHex, ToHex};
 use Address;
+use util::base32;
 
 
 const PRIV_KEY_SIZE: uint = 32;
@@ -13,9 +16,32 @@ const PUB_KEY_SIZE: uint = 32;
 pub struct PrivateKey([u8, ..PRIV_KEY_SIZE]);
 
 impl PrivateKey {
+	pub fn from_string(string: &str) -> Option<PrivateKey> {
+		match string.from_hex() {
+			Ok(bytes) => {
+				if bytes.len() != PRIV_KEY_SIZE {
+					return None;
+				}
+
+				let buffer = {
+					let mut buffer = [0u8, ..PRIV_KEY_SIZE];
+					buffer.clone_from_slice(bytes.as_slice());
+					buffer
+				};
+
+				Some(PrivateKey(buffer))
+			}
+			Err(_) => None
+		}
+	}
+
 	pub fn as_slice(&self) -> &[u8] {
 		let &PrivateKey(ref slice) = self;
 		slice
+	}
+
+	pub fn as_string(&self) -> String {
+		self.as_slice().to_hex()
 	}
 }
 
@@ -24,9 +50,35 @@ impl PrivateKey {
 pub struct PublicKey([u8, ..PUB_KEY_SIZE]);
 
 impl PublicKey {
+	pub fn from_string(key_str: &str) -> Option<PublicKey> {
+		if key_str.len() != 52 + 2 {
+			None
+		} else if !key_str.ends_with(".k") {
+			None
+		} else {
+			let hex_str = key_str.slice_to(52);
+
+			base32::decode(hex_str).map(|bytes| {
+				assert_eq!(bytes.len(), PUB_KEY_SIZE);
+
+				let buffer = {
+					let mut buffer = [0u8, ..PUB_KEY_SIZE];
+					buffer.clone_from_slice(bytes.as_slice());
+					buffer
+				};
+
+				PublicKey(buffer)
+			})
+		}
+	}
+
 	pub fn as_slice(&self) -> &[u8] {
 		let &PublicKey(ref slice) = self;
 		slice
+	}
+
+	pub fn as_string(&self) -> String {
+		base32::encode(self.as_slice()) + ".k"
 	}
 }
 
@@ -41,17 +93,29 @@ pub struct PrivateIdentity {
 impl PrivateIdentity {
 	pub fn generate<R: Rng>(rng: &mut R) -> PrivateIdentity {
 		loop {
-			let mut private_key_buf = [0, ..PRIV_KEY_SIZE];
-			rng.fill_bytes(private_key_buf.as_mut_slice());
-			let private_key = PrivateKey(private_key_buf);
+			let private_key = {
+				let mut private_key_buf = [0, ..PRIV_KEY_SIZE];
+				rng.fill_bytes(private_key_buf.as_mut_slice());
+				PrivateKey(private_key_buf)
+			};
 
-			if let Some(public_identity) = PublicIdentity::from_private_key(&private_key) {
-				return PrivateIdentity {
-					private_key: private_key,
-					public_key: public_identity.public_key,
-					address: public_identity.address
-				}
+			if let Some(identity) = PrivateIdentity::from_private_key(&private_key) {
+				return identity;
 			}
+		}
+	}
+
+	pub fn from_private_key(private_key: &PrivateKey) -> Option<PrivateIdentity> {
+		let public_key_buf = curve25519_base(private_key.as_slice());
+		let public_key = PublicKey(public_key_buf);
+
+		match Address::from_public_key(&public_key) {
+			Some(address) => Some(PrivateIdentity {
+				private_key: *private_key,
+				public_key: public_key,
+				address: address
+			}),
+			None => None
 		}
 	}
 }
@@ -64,14 +128,10 @@ pub struct PublicIdentity {
 }
 
 impl PublicIdentity {
-	pub fn from_private_key(private_key: &PrivateKey) -> Option<PublicIdentity> {
-		let &PrivateKey(ref private_key_slice) = private_key;
-		let public_key_buf = curve25519_base(private_key_slice);
-		let public_key = PublicKey(public_key_buf);
-
-		match Address::from_public_key(&public_key) {
+	pub fn from_public_key(public_key: &PublicKey) -> Option<PublicIdentity> {
+		match Address::from_public_key(public_key) {
 			Some(address) => Some(PublicIdentity {
-				public_key: public_key,
+				public_key: *public_key,
 				address: address
 			}),
 			None => None
@@ -92,13 +152,13 @@ mod tests {
 
 
 	#[test]
-	fn test_generate_private() {
+	fn test_private_generate() {
 		let identity = PrivateIdentity::generate(&mut OsRng::new().unwrap());
 		assert_eq!(identity.address.as_slice()[0], 0xFC);
 	}
 
 	#[test]
-	fn test_get_public() {
+	fn test_private_from_key() {
 		let priv_key = PrivateKey([
 			0x4c, 0x80, 0xb5, 0xfe, 0xe2, 0xad, 0xbd, 0x9a,
 			0xeb, 0x80, 0xed, 0xe1, 0xd7, 0x5b, 0xd2, 0xba,
@@ -108,7 +168,7 @@ mod tests {
 			0xfc, 0x50, 0x71, 0xae, 0x09, 0xd6, 0xf7, 0x94,
 			0x75, 0x54, 0x20, 0x83, 0x87, 0x3e, 0x88, 0xa9]).unwrap();
 		
-		let identity = PublicIdentity::from_private_key(&priv_key).unwrap();
+		let identity = PrivateIdentity::from_private_key(&priv_key).unwrap();
 		assert_eq!(identity.address, ip);
 
 
@@ -117,6 +177,6 @@ mod tests {
 			0x09, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16,
 			0x17, 0x18, 0x19, 0x20, 0x21, 0x22, 0x23, 0x24,
 			0x25, 0x26, 0x27, 0x28, 0x29, 0x30, 0x31, 0x32]);
-		assert!(PublicIdentity::from_private_key(&priv_key).is_none());
+		assert!(PrivateIdentity::from_private_key(&priv_key).is_none());
 	}
 }

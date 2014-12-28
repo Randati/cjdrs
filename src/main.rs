@@ -2,7 +2,7 @@ extern crate cjdrs;
 extern crate mio;
 
 #[cfg(not(test))] use std::rand::OsRng;
-#[cfg(not(test))] use cjdrs::PrivateIdentity;
+#[cfg(not(test))] use cjdrs::{PrivateKey, PrivateIdentity};
 #[cfg(not(test))] use cjdrs::interface;
 #[cfg(not(test))] use cjdrs::Router;
 #[cfg(not(test))] use cjdrs::EventHandler;
@@ -17,9 +17,19 @@ fn main() {
 	};
 
 
-	let identity = PrivateIdentity::generate(&mut rng);
-	println!("Generated identity: {}", identity.address);
+	// let identity = PrivateIdentity::generate(&mut rng);
+	let identity = {
+		let private_key = PrivateKey::from_string(
+			"4c80b5fee2adbd9aeb80ede1d75bd2ba93c2a6eabef38be18d4b8a418d9aa0bc")
+			.expect("Invalid private key");
+		
+		PrivateIdentity::from_private_key(&private_key)
+			.expect("Identity cannot be created from the private key")
+	};
 
+	println!("Private key: {}", identity.private_key.as_string());
+	println!("Public key:  {}", identity.public_key.as_string());
+	println!("Address:     {}", identity.address);
 	
 	let tun_interface = interface::Tun::new(&identity.address);
 	println!("Opened tun device '{}'", tun_interface.get_name());
