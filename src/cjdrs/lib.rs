@@ -8,6 +8,7 @@ pub use identity::{
 	PrivateKey,
 	PublicKey};
 pub use interface::NetInterface;
+pub use packet::Packet;
 pub use route::Route;
 pub use router::Router;
 

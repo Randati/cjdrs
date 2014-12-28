@@ -1,12 +1,12 @@
 use std::mem;
-use packet::{ParseResult, PacketData};
+use packet::{ParseResult, Packet};
 
-const DUCTTAPE_HEADER_LENGTH: uint = 28;
+pub const DUCTTAPE_HEADER_LENGTH: uint = 28;
 
 
 #[deriving(Copy, Clone, Eq, PartialEq)]
 #[repr(packed)]
-struct DucttapeHeader {
+pub struct DucttapeHeader {
 	session_layer: u32,
 	_switch_header: u32,
 	_ipv6_header: u32,
@@ -16,25 +16,25 @@ struct DucttapeHeader {
 }
 
 #[deriving(Copy, Clone, Eq, PartialEq)]
-pub struct DucttapePacket<'a> {
+pub struct Ducttape<'a> {
 	slice: &'a [u8],
 	header: &'a DucttapeHeader,
 	data: &'a [u8]
 }
 
-impl<'a> DucttapePacket<'a> {
+impl<'a> Ducttape<'a> {
 	pub fn get_data(&self) -> &'a [u8] {
 		self.data
 	}
 }
 
-impl<'a> PacketData<'a> for DucttapePacket<'a> {
-	fn from_buffer(buffer: &'a [u8]) -> ParseResult<DucttapePacket<'a>> {
+impl<'a> Packet<'a> for Ducttape<'a> {
+	fn from_buffer(buffer: &'a [u8]) -> ParseResult<Ducttape<'a>> {
 		if buffer.len() < DUCTTAPE_HEADER_LENGTH {
 			return Err("Ducttape packet too short")
 		}
 
-		Ok(DucttapePacket {
+		Ok(Ducttape {
 			slice: buffer,
 			header: unsafe { mem::transmute(buffer.as_ptr()) },
 			data: buffer.slice_from(DUCTTAPE_HEADER_LENGTH)
@@ -43,5 +43,17 @@ impl<'a> PacketData<'a> for DucttapePacket<'a> {
 
 	fn as_slice(&self) -> &'a [u8] {
 		self.slice
+	}
+}
+
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+	use std::mem::size_of;
+	
+	#[test]
+	fn test_sizeof() {
+		assert_eq!(size_of::<DucttapeHeader>(), DUCTTAPE_HEADER_LENGTH);
 	}
 }

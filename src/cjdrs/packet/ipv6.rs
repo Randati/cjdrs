@@ -1,14 +1,14 @@
 use std::mem;
 use std::num::Int;
-use packet::{ParseResult, PacketData};
+use packet::{ParseResult, Packet};
 use Address;
 
-const IPV6_HEADER_LENGTH: uint = 40;
+pub const IPV6_HEADER_LENGTH: uint = 40;
 
 
 #[deriving(Copy, Clone, Eq, PartialEq)]
 #[repr(packed)]
-struct IPv6Header {
+pub struct IPv6Header {
 	version_class_flow: u16,
 	flow_label_low: u16,
 	payload_length_be: u16,
@@ -25,13 +25,13 @@ impl IPv6Header {
 }
 
 #[deriving(Copy, Clone, Eq, PartialEq)]
-pub struct IPv6Packet<'a, D: PacketData<'a>> {
+pub struct IPv6<'a, D: Packet<'a>> {
 	slice: &'a [u8],
 	header: &'a IPv6Header,
 	data: D
 }
 
-impl<'a, D: PacketData<'a>> IPv6Packet<'a, D> {
+impl<'a, D: Packet<'a>> IPv6<'a, D> {
 	pub fn get_data(&self) -> &D {
 		&self.data
 	}
@@ -41,8 +41,8 @@ impl<'a, D: PacketData<'a>> IPv6Packet<'a, D> {
 	}
 }
 
-impl<'a, D: PacketData<'a>> PacketData<'a> for IPv6Packet<'a, D> {
-	fn from_buffer(buffer: &'a [u8]) -> ParseResult<IPv6Packet<'a, D>> {
+impl<'a, D: Packet<'a>> Packet<'a> for IPv6<'a, D> {
+	fn from_buffer(buffer: &'a [u8]) -> ParseResult<IPv6<'a, D>> {
 		if buffer.len() < IPV6_HEADER_LENGTH {
 			return Err("IPv6 packet too short")
 		}
@@ -59,9 +59,9 @@ impl<'a, D: PacketData<'a>> PacketData<'a> for IPv6Packet<'a, D> {
 			return Err("Destination address not valid")
 		}
 
-		let data = try!(PacketData::from_buffer(buffer.slice_from(IPV6_HEADER_LENGTH)));
+		let data = try!(Packet::from_buffer(buffer.slice_from(IPV6_HEADER_LENGTH)));
 
-		Ok(IPv6Packet {
+		Ok(IPv6 {
 			slice: buffer,
 			header: header,
 			data: data
@@ -70,5 +70,17 @@ impl<'a, D: PacketData<'a>> PacketData<'a> for IPv6Packet<'a, D> {
 
 	fn as_slice(&self) -> &'a [u8] {
 		self.slice
+	}
+}
+
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+	use std::mem::size_of;
+	
+	#[test]
+	fn test_sizeof() {
+		assert_eq!(size_of::<IPv6Header>(), IPV6_HEADER_LENGTH);
 	}
 }

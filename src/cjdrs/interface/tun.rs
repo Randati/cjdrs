@@ -6,7 +6,8 @@ use self::mio::{IoHandle, IoDesc};
 use self::tuntap::{TunTap, Tun};
 use Address;
 use EventReceiver;
-use packet::{TunPacket, IPv6Packet, RawPacket, ParseResult, PacketData};
+use packet;
+use Packet;
 
 
 pub struct Tun {
@@ -44,8 +45,8 @@ impl EventReceiver for Tun {
 		let mut buffer = [0u8, ..1500];
 		let data_slice = self.tun.read(&mut buffer).ok().expect("Reading did not succeed");
 
-		let packet: ParseResult<TunPacket<IPv6Packet<RawPacket>>> =
-			PacketData::from_buffer(data_slice);
+		let packet: packet::ParseResult<packet::Tun<packet::IPv6<packet::Raw>>> =
+			Packet::from_buffer(data_slice);
 
 		match packet {
 			Ok(tun_packet) => {
