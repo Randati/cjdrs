@@ -1,2 +1,6 @@
 language: rust
 sudo: false
+install:
+    - wget http://download.libsodium.org/libsodium/releases/libsodium-1.0.1.tar.gz
+    - tar -zxvf libsodium-1.0.1.tar.gz
+    - cd libsodium-1.0.1 && ./configure --prefix=/usr && make && make check && make install
