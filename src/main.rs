@@ -1,6 +1,5 @@
 extern crate cjdrs;
 extern crate mio;
-extern crate sodiumoxide;
 
 #[cfg(not(test))] use std::rand::OsRng;
 #[cfg(not(test))] use cjdrs::{PrivateKey, PrivateIdentity};
@@ -11,8 +10,7 @@ extern crate sodiumoxide;
 #[cfg(not(test))]
 fn main() {
 	println!("Hello, cjdns!");
-
-	sodiumoxide::init();
+	cjdrs::init();
 
 	let mut rng = match OsRng::new() {
 		Err(e) => panic!("No random number generator available: {}", e),
@@ -23,7 +21,7 @@ fn main() {
 	// let identity = PrivateIdentity::generate(&mut rng);
 	let identity = {
 		let private_key = PrivateKey::from_string(
-			"4c80b5fee2adbd9aeb80ede1d75bd2ba93c2a6eabef38be18d4b8a418d9aa0bc")
+			"e4a155fc7a3a8e37ca6f0817629c43df6f0902a7b1c51858d842bc5d3a3e0355")
 			.expect("Invalid private key");
 		
 		PrivateIdentity::from_private_key(&private_key)

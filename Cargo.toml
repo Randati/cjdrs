@@ -17,7 +17,6 @@ rustc-serialize = "*"
 
 [dependencies.tuntap]
 git = "https://github.com/Randati/tuntap-rust.git"
-#path = "../tuntap-rust"
 
 [dependencies.sodiumoxide]
 git = "https://github.com/dnaq/sodiumoxide.git"

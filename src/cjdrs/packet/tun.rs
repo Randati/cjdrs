@@ -1,5 +1,5 @@
 use std::mem;
-use packet::{ParseResult, Packet};
+use packet::{ParseResult, Packet, buffer_to_type};
 use util::BigEndian;
 
 pub const TUN_HEADER_LENGTH: uint = 4;
@@ -42,11 +42,7 @@ impl<'a, D: Packet<'a>> Tun<'a, D> {
 
 impl<'a, D: Packet<'a>> Packet<'a> for Tun<'a, D> {
 	fn from_buffer(buffer: &'a [u8]) -> ParseResult<Tun<'a, D>> {
-		if buffer.len() < TUN_HEADER_LENGTH {
-			return Err("Tun packet too short");
-		}
-
-		let header: &TunHeader = unsafe { mem::transmute(buffer.as_ptr()) };
+		let header: &TunHeader = try!(buffer_to_type(buffer));
 
 		if !header.is_ipv6() {
 			return Err("Tun packet not IPv6");

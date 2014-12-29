@@ -33,7 +33,7 @@ source = "git+https://github.com/reem/mio.git?ref=export-IoDesc#e0de91972a9599c7
 dependencies = [
  "log 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "nix 0.1.0 (git+https://github.com/carllerche/nix-rust)",
- "time 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "time 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -61,12 +61,10 @@ dependencies = [
 
 [[package]]
 name = "time"
-version = "0.1.4"
+version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "gcc 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
- "log 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
- "rustc-serialize 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]

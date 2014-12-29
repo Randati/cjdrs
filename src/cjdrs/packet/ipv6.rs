@@ -1,6 +1,6 @@
 use std::mem;
 use Address;
-use packet::{ParseResult, Packet};
+use packet::{ParseResult, Packet, buffer_to_type};
 use util::BigEndian;
 
 pub const IPV6_HEADER_LENGTH: uint = 40;
@@ -43,11 +43,7 @@ impl<'a, D: Packet<'a>> IPv6<'a, D> {
 
 impl<'a, D: Packet<'a>> Packet<'a> for IPv6<'a, D> {
 	fn from_buffer(buffer: &'a [u8]) -> ParseResult<IPv6<'a, D>> {
-		if buffer.len() < IPV6_HEADER_LENGTH {
-			return Err("IPv6 packet too short")
-		}
-
-		let header: &IPv6Header = unsafe { mem::transmute(buffer.as_ptr()) };
+		let header: &IPv6Header = try!(buffer_to_type(buffer));
 
 		if header.get_version() != 6 {
 			return Err("Packet not IPv6")
