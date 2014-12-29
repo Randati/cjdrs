@@ -6,4 +6,4 @@ install:
     - cd libsodium-1.0.1 && ./configure --prefix=$PWD/install && make && make check && make install
     - export CPATH=$CPATH:$PWD/install/include
     - export LIBRARY_PATH=$LIBRARY_PATH:$PWD/install/lib
-    - export LD_LIBRARY_PATH=$LIBRARY_PATH:$PWD/install/lib
+    - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/install/lib
