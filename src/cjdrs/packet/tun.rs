@@ -1,6 +1,6 @@
 use std::mem;
-use std::num::Int;
 use packet::{ParseResult, Packet};
+use util::BigEndian;
 
 pub const TUN_HEADER_LENGTH: uint = 4;
 
@@ -16,13 +16,13 @@ enum TunProtocolType {
 #[deriving(Copy, Clone, Eq, PartialEq)]
 #[repr(packed)]
 pub struct TunHeader {
-	_unused: u16,
-	protocol_type: u16
+	_unused: BigEndian<u16>,
+	protocol_type: BigEndian<u16>
 }
 
 impl TunHeader {
 	fn is_ipv6(&self) -> bool {
-		Int::from_be(self.protocol_type) == TunProtocolType::IPv6 as u16
+		self.protocol_type.val() == TunProtocolType::IPv6 as u16
 	}
 }
 

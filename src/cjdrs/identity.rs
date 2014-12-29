@@ -151,6 +151,7 @@ mod tests {
 		PrivateKey,
 		PrivateIdentity};
 	use address::Address;
+	use test::Bencher;
 
 
 	#[test]
@@ -180,5 +181,14 @@ mod tests {
 			0x17, 0x18, 0x19, 0x20, 0x21, 0x22, 0x23, 0x24,
 			0x25, 0x26, 0x27, 0x28, 0x29, 0x30, 0x31, 0x32]);
 		assert!(PrivateIdentity::from_private_key(&priv_key).is_none());
+	}
+
+	#[bench]
+	fn bench_generate_identity(b: &mut Bencher) {
+		let mut rng = OsRng::new().unwrap();
+
+		b.iter(|| {
+			PrivateIdentity::generate(&mut rng)
+		})
 	}
 }

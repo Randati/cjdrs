@@ -1,7 +1,7 @@
 use std::mem;
-use std::num::Int;
-use packet::{ParseResult, Packet};
 use Address;
+use packet::{ParseResult, Packet};
+use util::BigEndian;
 
 pub const IPV6_HEADER_LENGTH: uint = 40;
 
@@ -9,9 +9,9 @@ pub const IPV6_HEADER_LENGTH: uint = 40;
 #[deriving(Copy, Clone, Eq, PartialEq)]
 #[repr(packed)]
 pub struct IPv6Header {
-	version_class_flow: u16,
-	flow_label_low: u16,
-	payload_length_be: u16,
+	version_class_flow: BigEndian<u16>,
+	flow_label_low: BigEndian<u16>,
+	payload_length: BigEndian<u16>,
 	next_header: u8,
 	hop_limit: u8,
 	source_addr: [u8, ..16],
@@ -20,7 +20,7 @@ pub struct IPv6Header {
 
 impl IPv6Header {
 	fn get_version(&self) -> uint {
-		((Int::from_be(self.version_class_flow) & 0xF000) >> 12) as uint
+		((self.version_class_flow.val() & 0xF000) >> 12) as uint
 	}
 }
 

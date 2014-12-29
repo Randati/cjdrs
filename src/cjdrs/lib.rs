@@ -1,5 +1,6 @@
 #![feature(globs)]
 
+#[cfg(test)] extern crate test;
 extern crate mio;
 extern crate sodiumoxide;
 extern crate "rustc-serialize" as serialize;

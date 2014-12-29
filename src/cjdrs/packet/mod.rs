@@ -1,8 +1,6 @@
-pub use self::ducttape::Ducttape;
 pub use self::ipv6::IPv6;
 pub use self::tun::Tun;
 
-mod ducttape;
 mod ipv6;
 mod tun;
 
