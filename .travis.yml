@@ -3,4 +3,7 @@ sudo: false
 install:
     - wget http://download.libsodium.org/libsodium/releases/libsodium-1.0.1.tar.gz
     - tar -zxvf libsodium-1.0.1.tar.gz
-    - cd libsodium-1.0.1 && ./configure --prefix=/usr && make && make check && make install
+    - cd libsodium-1.0.1 && ./configure --prefix=$PWD/install && make && make check && make install
+    - export CPATH=$CPATH:$PWD/install/include
+    - export LIBRARY_PATH=$LIBRARY_PATH:$PWD/install/lib
+    - export LD_LIBRARY_PATH=$LIBRARY_PATH:$PWD/install/lib
