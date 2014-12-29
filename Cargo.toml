@@ -22,5 +22,4 @@ git = "https://github.com/Randati/tuntap-rust.git"
 git = "https://github.com/dnaq/sodiumoxide.git"
 
 [dependencies.mio]
-git = "https://github.com/reem/mio.git"
-branch = "export-IoDesc"
+git = "https://github.com/carllerche/mio.git"

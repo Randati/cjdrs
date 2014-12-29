@@ -2,7 +2,7 @@
 name = "cjdrs"
 version = "0.0.1"
 dependencies = [
- "mio 0.0.1 (git+https://github.com/reem/mio.git?ref=export-IoDesc)",
+ "mio 0.0.1 (git+https://github.com/carllerche/mio.git)",
  "rustc-serialize 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "sodiumoxide 0.0.1 (git+https://github.com/dnaq/sodiumoxide.git)",
  "tuntap 0.0.1 (git+https://github.com/Randati/tuntap-rust.git)",
@@ -29,7 +29,7 @@ dependencies = [
 [[package]]
 name = "mio"
 version = "0.0.1"
-source = "git+https://github.com/reem/mio.git?ref=export-IoDesc#e0de91972a9599c73ce86bc504ad7bbd9dbb62de"
+source = "git+https://github.com/carllerche/mio.git#5ddd497926302008b0125c04cd7523d92d906bb6"
 dependencies = [
  "log 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "nix 0.1.0 (git+https://github.com/carllerche/nix-rust)",
