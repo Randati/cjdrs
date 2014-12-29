@@ -1,5 +1,6 @@
 extern crate cjdrs;
 extern crate mio;
+extern crate sodiumoxide;
 
 #[cfg(not(test))] use std::rand::OsRng;
 #[cfg(not(test))] use cjdrs::{PrivateKey, PrivateIdentity};
@@ -10,6 +11,8 @@ extern crate mio;
 #[cfg(not(test))]
 fn main() {
 	println!("Hello, cjdns!");
+
+	sodiumoxide::init();
 
 	let mut rng = match OsRng::new() {
 		Err(e) => panic!("No random number generator available: {}", e),

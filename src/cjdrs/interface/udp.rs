@@ -1,9 +1,8 @@
-extern crate mio;
-
 use std::str;
-use self::mio::net::SockAddr;
-use self::mio::net::udp::UdpSocket;
-use self::mio::{event, IoReader};
+use mio;
+use mio::net::SockAddr;
+use mio::net::udp::UdpSocket;
+use mio::{event, IoReader};
 use EventReceiver;
 use NetInterface;
 

@@ -19,8 +19,8 @@ rustc-serialize = "*"
 git = "https://github.com/Randati/tuntap-rust.git"
 #path = "../tuntap-rust"
 
-[dependencies.rust-crypto]
-git = "https://github.com/DaGenix/rust-crypto.git"
+[dependencies.sodiumoxide]
+git = "https://github.com/dnaq/sodiumoxide.git"
 
 [dependencies.mio]
 git = "https://github.com/reem/mio.git"

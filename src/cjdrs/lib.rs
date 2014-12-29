@@ -1,5 +1,10 @@
 #![feature(globs)]
 
+extern crate mio;
+extern crate sodiumoxide;
+extern crate "rustc-serialize" as serialize;
+extern crate tuntap;
+
 pub use address::Address;
 pub use event_handler::{EventHandler, EventReceiver};
 pub use identity::{

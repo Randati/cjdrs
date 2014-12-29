@@ -1,15 +1,12 @@
-extern crate crypto;
-extern crate "rustc-serialize" as serialize;
-
 use std::rand::Rng;
-use self::crypto::curve25519::curve25519_base;
-use self::serialize::hex::{FromHex, ToHex};
+use sodiumoxide::crypto::scalarmult::curve25519;
+use serialize::hex::{FromHex, ToHex};
 use Address;
 use util::base32;
 
 
-const PRIV_KEY_SIZE: uint = 32;
-const PUB_KEY_SIZE: uint = 32;
+pub const PRIV_KEY_SIZE: uint = 32;
+pub const PUB_KEY_SIZE: uint = 32;
 
 
 #[deriving(Copy, Clone, Eq, PartialEq, Hash)]
@@ -50,6 +47,18 @@ impl PrivateKey {
 pub struct PublicKey([u8, ..PUB_KEY_SIZE]);
 
 impl PublicKey {
+	pub fn from_slice(slice: &[u8]) -> PublicKey {
+		assert_eq!(slice.len(), PUB_KEY_SIZE);
+
+		let buffer = {
+			let mut buffer = [0u8, ..PUB_KEY_SIZE];
+			buffer.clone_from_slice(slice);
+			buffer
+		};
+
+		PublicKey(buffer)
+	}
+
 	pub fn from_string(key_str: &str) -> Option<PublicKey> {
 		if key_str.len() != 52 + 2 {
 			None
@@ -60,14 +69,7 @@ impl PublicKey {
 
 			base32::decode(hex_str).map(|bytes| {
 				assert_eq!(bytes.len(), PUB_KEY_SIZE);
-
-				let buffer = {
-					let mut buffer = [0u8, ..PUB_KEY_SIZE];
-					buffer.clone_from_slice(bytes.as_slice());
-					buffer
-				};
-
-				PublicKey(buffer)
+				PublicKey::from_slice(bytes.as_slice())
 			})
 		}
 	}
@@ -106,8 +108,9 @@ impl PrivateIdentity {
 	}
 
 	pub fn from_private_key(private_key: &PrivateKey) -> Option<PrivateIdentity> {
-		let public_key_buf = curve25519_base(private_key.as_slice());
-		let public_key = PublicKey(public_key_buf);
+		let input = curve25519::Scalar::from_slice(private_key.as_slice()).unwrap();
+		let public_key_buf = curve25519::scalarmult_base(&input);
+		let public_key = PublicKey::from_slice(public_key_buf.as_slice());
 
 		match Address::from_public_key(&public_key) {
 			Some(address) => Some(PrivateIdentity {
@@ -146,8 +149,7 @@ mod tests {
 	use std::rand::OsRng;
 	use identity::{
 		PrivateKey,
-		PrivateIdentity,
-		PublicIdentity};
+		PrivateIdentity};
 	use address::Address;
 
 

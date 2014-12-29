@@ -1,5 +1,4 @@
-extern crate mio;
-
+use mio;
 use Router;
 use interface;
 

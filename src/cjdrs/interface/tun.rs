@@ -1,9 +1,6 @@
-extern crate tuntap;
-extern crate mio;
-
 use std::os::unix::prelude::AsRawFd;
-use self::mio::{IoHandle, IoDesc};
-use self::tuntap::{TunTap, Tun};
+use mio;
+use tuntap::{TunTap, Tun};
 use Address;
 use EventReceiver;
 use packet;
@@ -60,7 +57,7 @@ impl EventReceiver for Tun {
 }
 
 impl mio::IoHandle for Tun {
-	fn desc(&self) -> &IoDesc {
+	fn desc(&self) -> &mio::IoDesc {
 		&self.io_desc
 	}
 }

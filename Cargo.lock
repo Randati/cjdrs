@@ -3,8 +3,8 @@ name = "cjdrs"
 version = "0.0.1"
 dependencies = [
  "mio 0.0.1 (git+https://github.com/reem/mio.git?ref=export-IoDesc)",
- "rust-crypto 0.2.5 (git+https://github.com/DaGenix/rust-crypto.git)",
  "rustc-serialize 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
+ "sodiumoxide 0.0.1 (git+https://github.com/dnaq/sodiumoxide.git)",
  "tuntap 0.0.1 (git+https://github.com/Randati/tuntap-rust.git)",
 ]
 
@@ -12,6 +12,11 @@ dependencies = [
 name = "gcc"
 version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "libsodium-sys"
+version = "0.0.1"
+source = "git+https://github.com/dnaq/sodiumoxide.git#15ea351b63f75127aa48180d0b2821c17d6e68d7"
 
 [[package]]
 name = "log"
@@ -42,18 +47,17 @@ version = "0.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
-name = "rust-crypto"
-version = "0.2.5"
-source = "git+https://github.com/DaGenix/rust-crypto.git#e07da8d6e762757433741dc73f14f4fbdf1f57be"
-dependencies = [
- "rustc-serialize 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
- "time 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
 name = "rustc-serialize"
 version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "sodiumoxide"
+version = "0.0.1"
+source = "git+https://github.com/dnaq/sodiumoxide.git#15ea351b63f75127aa48180d0b2821c17d6e68d7"
+dependencies = [
+ "libsodium-sys 0.0.1 (git+https://github.com/dnaq/sodiumoxide.git)",
+]
 
 [[package]]
 name = "time"
