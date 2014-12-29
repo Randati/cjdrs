@@ -1,4 +1,3 @@
-use std::mem;
 use Address;
 use packet::{ParseResult, Packet, buffer_to_type};
 use util::BigEndian;

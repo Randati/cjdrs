@@ -20,7 +20,7 @@ source = "git+https://github.com/dnaq/sodiumoxide.git#15ea351b63f75127aa48180d0b
 
 [[package]]
 name = "log"
-version = "0.1.4"
+version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "regex 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -31,7 +31,7 @@ name = "mio"
 version = "0.0.1"
 source = "git+https://github.com/reem/mio.git?ref=export-IoDesc#e0de91972a9599c73ce86bc504ad7bbd9dbb62de"
 dependencies = [
- "log 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "log 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "nix 0.1.0 (git+https://github.com/carllerche/nix-rust)",
  "time 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
