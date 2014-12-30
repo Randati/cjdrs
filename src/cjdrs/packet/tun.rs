@@ -1,15 +1,9 @@
 use packet::{ParseResult, Packet, buffer_to_type};
+use packet;
 use util::BigEndian;
 
 pub const TUN_HEADER_LENGTH: uint = 4;
 
-
-#[deriving(Copy, Clone, Eq, PartialEq)]
-#[repr(u16)]
-enum TunProtocolType {
-	IPv4 = 0x0800,
-	IPv6 = 0x86DD,
-}
 
 
 #[deriving(Copy, Clone, Eq, PartialEq)]
@@ -21,33 +15,23 @@ pub struct TunHeader {
 
 impl TunHeader {
 	fn is_ipv6(&self) -> bool {
-		self.protocol_type.val() == TunProtocolType::IPv6 as u16
+		self.protocol_type.val() == 0x86DD
 	}
 }
 
 
-#[deriving(Copy, Clone, Eq, PartialEq)]
-pub struct Tun<'a, D: Packet<'a>> {
-	slice: &'a [u8],
-	header: &'a TunHeader,
-	data: D
-}
 
-impl<'a, D: Packet<'a>> Tun<'a, D> {
-	pub fn get_data(&self) -> &D {
-		&self.data
-	}
-}
+pub type Tun<'a> = Packet<'a, TunHeader, packet::IPv6<'a>>;
 
-impl<'a, D: Packet<'a>> Packet<'a> for Tun<'a, D> {
-	fn from_buffer(buffer: &'a [u8]) -> ParseResult<Tun<'a, D>> {
+impl<'a> Tun<'a> {
+	pub fn from_buffer(buffer: &[u8]) -> ParseResult<Tun> {
 		let header: &TunHeader = try!(buffer_to_type(buffer));
 
 		if !header.is_ipv6() {
 			return Err("Tun packet not IPv6");
 		}
 
-		let data = try!(Packet::from_buffer(buffer.slice_from(TUN_HEADER_LENGTH)));
+		let data = try!(packet::IPv6::from_buffer(buffer.slice_from(TUN_HEADER_LENGTH)));
 
 		Ok(Tun {
 			slice: buffer,
@@ -56,10 +40,11 @@ impl<'a, D: Packet<'a>> Packet<'a> for Tun<'a, D> {
 		})
 	}
 
-	fn as_slice(&self) -> &'a [u8] {
-		self.slice
+	pub fn get_data(&self) -> &packet::IPv6<'a> {
+		&self.data
 	}
 }
+
 
 
 #[cfg(test)]

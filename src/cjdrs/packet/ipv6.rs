@@ -5,6 +5,7 @@ use util::BigEndian;
 pub const IPV6_HEADER_LENGTH: uint = 40;
 
 
+
 #[deriving(Copy, Clone, Eq, PartialEq)]
 #[repr(packed)]
 pub struct IPv6Header {
@@ -23,25 +24,12 @@ impl IPv6Header {
 	}
 }
 
-#[deriving(Copy, Clone, Eq, PartialEq)]
-pub struct IPv6<'a, D: Packet<'a>> {
-	slice: &'a [u8],
-	header: &'a IPv6Header,
-	data: D
-}
 
-impl<'a, D: Packet<'a>> IPv6<'a, D> {
-	pub fn get_data(&self) -> &D {
-		&self.data
-	}
 
-	pub fn get_destination(&self) -> Address {
-		Address::from_slice(&self.header.destination_addr).unwrap()
-	}
-}
+pub type IPv6<'a> = Packet<'a, IPv6Header, &'a [u8]>;
 
-impl<'a, D: Packet<'a>> Packet<'a> for IPv6<'a, D> {
-	fn from_buffer(buffer: &'a [u8]) -> ParseResult<IPv6<'a, D>> {
+impl<'a> IPv6<'a> {
+	pub fn from_buffer(buffer: &[u8]) -> ParseResult<IPv6> {
 		let header: &IPv6Header = try!(buffer_to_type(buffer));
 
 		if header.get_version() != 6 {
@@ -54,7 +42,8 @@ impl<'a, D: Packet<'a>> Packet<'a> for IPv6<'a, D> {
 			return Err("Destination address not valid")
 		}
 
-		let data = try!(Packet::from_buffer(buffer.slice_from(IPV6_HEADER_LENGTH)));
+
+		let data = buffer.slice_from(IPV6_HEADER_LENGTH);
 
 		Ok(IPv6 {
 			slice: buffer,
@@ -63,10 +52,15 @@ impl<'a, D: Packet<'a>> Packet<'a> for IPv6<'a, D> {
 		})
 	}
 
-	fn as_slice(&self) -> &'a [u8] {
-		self.slice
+	pub fn get_data(&self) -> &'a [u8] {
+		self.data
+	}
+
+	pub fn get_destination(&self) -> Address {
+		Address::from_slice(&self.header.destination_addr).unwrap()
 	}
 }
+
 
 
 #[cfg(test)]

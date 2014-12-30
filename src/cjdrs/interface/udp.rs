@@ -1,10 +1,11 @@
-use std::str;
 use mio;
 use mio::net::SockAddr;
 use mio::net::udp::UdpSocket;
 use mio::{event, IoReader};
 use EventReceiver;
 use NetInterface;
+use Task;
+use packet;
 
 
 pub struct Udp {
@@ -47,16 +48,18 @@ impl EventReceiver for Udp {
 		event_loop.register_opt(&self.recv_sock, token, event::READABLE, event::EDGE)
 	}
 
-	fn receive(&mut self) {
-		let mut buffer = [0u8, ..1500];
+	fn receive<'a>(&'a mut self, buffer: &'a mut [u8]) -> Option<Task> {
+		let len = self.recv_sock.read_slice(buffer).unwrap().unwrap();
+		let data = buffer.slice_to(len);
 
-		match self.recv_sock.read_slice(&mut buffer).unwrap() {
-			mio::NonBlock::Ready(len) => {
-				let data = buffer.slice_to(len);
-				let s = str::from_utf8(data).unwrap();
-				println!("Got: '{}'", s);
+		match packet::CryptoAuth::from_buffer(data) {
+			Ok(ca_packet) => {
+				Some(Task::HandleIncomingPacket(ca_packet))
 			},
-			mio::NonBlock::WouldBlock => panic!()
-		};
+			Err(e) => {
+				println!("Received an invalid packet from udp interface: {}", e);
+				None
+			}
+		}
 	}
 }

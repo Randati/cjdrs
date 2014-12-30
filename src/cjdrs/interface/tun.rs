@@ -4,7 +4,7 @@ use tuntap::{TunTap, Tun};
 use Address;
 use EventReceiver;
 use packet;
-use Packet;
+use Task;
 
 
 pub struct Tun {
@@ -38,20 +38,19 @@ impl EventReceiver for Tun {
 		event_loop.register(self, token)
 	}
 
-	fn receive(&mut self) {
-		let mut buffer = [0u8, ..1500];
-		let data_slice = self.tun.read(&mut buffer).ok().expect("Reading did not succeed");
-
-		let packet: packet::ParseResult<packet::Tun<packet::IPv6<packet::Raw>>> =
-			Packet::from_buffer(data_slice);
+	fn receive<'a>(&'a mut self, buffer: &'a mut [u8]) -> Option<Task> {
+		let data_slice = self.tun.read(buffer).ok().expect("Reading did not succeed");
+		let packet = packet::Tun::from_buffer(data_slice);
 
 		match packet {
 			Ok(tun_packet) => {
-				let ipv6_packet = tun_packet.get_data();
-				let destination = ipv6_packet.get_destination();
-				println!("Tun -> {}", destination);
+				let data = tun_packet.get_data().get_data();
+				Some(Task::HandleOutgoingPacket(data))
 			},
-			Err(e) => println!("Couldn't parse packet: {}", e)
+			Err(e) => {
+				println!("Received an invalid packet from tun interface: {}", e);
+				None
+			}
 		}
 	}
 }

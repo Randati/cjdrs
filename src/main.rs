@@ -45,7 +45,7 @@ fn main() {
 	let event_handler = EventHandler::new(&mut mio_loop,
 		tun_interface,
 		udp_interface,
-		router);
+		router).ok().expect("Couldn't create the event handler");
 	
 	if let Err(e) = mio_loop.run(event_handler) {
 		panic!("Error while running event loop: {}", e.error);
