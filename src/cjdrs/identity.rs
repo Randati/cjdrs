@@ -1,6 +1,6 @@
 use std::rand::Rng;
 use sodiumoxide::crypto::scalarmult::curve25519;
-use serialize::hex::{FromHex, ToHex};
+use rustc_serialize::hex::{FromHex, ToHex};
 use Address;
 use util::base32;
 

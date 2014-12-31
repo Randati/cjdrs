@@ -2,10 +2,28 @@
 name = "cjdrs"
 version = "0.0.1"
 dependencies = [
+ "docopt_macros 0.6.20 (git+git://github.com/docopt/docopt.rs)",
  "mio 0.0.1 (git+https://github.com/carllerche/mio.git)",
  "rustc-serialize 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "sodiumoxide 0.0.1 (git+https://github.com/dnaq/sodiumoxide.git)",
  "tuntap 0.0.1 (git+https://github.com/Randati/tuntap-rust.git)",
+]
+
+[[package]]
+name = "docopt"
+version = "0.6.20"
+source = "git+git://github.com/docopt/docopt.rs#338f1e66c4ee6433092a45a12e624bb309706101"
+dependencies = [
+ "regex 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rustc-serialize 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "docopt_macros"
+version = "0.6.20"
+source = "git+git://github.com/docopt/docopt.rs#338f1e66c4ee6433092a45a12e624bb309706101"
+dependencies = [
+ "docopt 0.6.20 (git+git://github.com/docopt/docopt.rs)",
 ]
 
 [[package]]

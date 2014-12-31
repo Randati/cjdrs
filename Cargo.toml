@@ -23,3 +23,6 @@ git = "https://github.com/dnaq/sodiumoxide.git"
 
 [dependencies.mio]
 git = "https://github.com/carllerche/mio.git"
+
+[dependencies.docopt_macros]
+git = "git://github.com/docopt/docopt.rs"

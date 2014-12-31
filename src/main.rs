@@ -1,15 +1,41 @@
+#![feature(phase)]
+
 extern crate cjdrs;
 extern crate mio;
+extern crate "rustc-serialize" as rustc_serialize;
+extern crate docopt;
+#[phase(plugin)] extern crate docopt_macros;
 
 #[cfg(not(test))] use std::rand::OsRng;
+#[cfg(not(test))] use docopt::Docopt;
+#[cfg(not(test))] use cjdrs::Config;
 #[cfg(not(test))] use cjdrs::{PrivateKey, PrivateIdentity};
 #[cfg(not(test))] use cjdrs::interface;
 #[cfg(not(test))] use cjdrs::Router;
 #[cfg(not(test))] use cjdrs::EventHandler;
 
+docopt!(Args deriving Show, "
+Usage: cjdrs --help
+       cjdrs init [--cfg=<file>]
+       cjdrs run [--cfg=<file>]
+
+Options:
+  -h, --help      Show this message.
+  --cfg=<file>    Configuration file [default: cjdrs.conf]
+
+1. Run 'cjdrs init' to generate a configuration file.
+2. Edit the configuration file as needed.
+2. Run 'cjdrs run' to start cjdrs.
+
+Configuration file defaults to 'cjdrs.conf' if not given.
+");
+
+
+
 #[cfg(not(test))]
 fn main() {
-	println!("Hello, cjdns!");
+	let args: Args = Args::docopt().decode().unwrap_or_else(|e| e.exit());
+
 	cjdrs::init();
 
 	let mut rng = match OsRng::new() {
@@ -17,18 +43,32 @@ fn main() {
 		Ok(r) => r
 	};
 
+	let config_path = Path::new(args.flag_cfg);
 
-	// let identity = PrivateIdentity::generate(&mut rng);
-	let identity = {
-		let private_key = PrivateKey::from_string(
-			"e4a155fc7a3a8e37ca6f0817629c43df6f0902a7b1c51858d842bc5d3a3e0355")
-			.expect("Invalid private key");
+
+	// Generate new configuraion file
+	if args.cmd_init {
+		let identity = PrivateIdentity::generate(&mut rng);
 		
-		PrivateIdentity::from_private_key(&private_key)
-			.expect("Identity cannot be created from the private key")
+		let config = Config::get_default(&identity);
+		config.write(&config_path);
+
+		println!("Created new configuration file '{}'", config_path.display());
+		println!("Public key: {}", identity.public_key.as_string());
+		println!("Address:    {}", identity.address);
+		return;
+	}
+
+	// Otherwise continue running
+	assert!(args.cmd_run);
+
+
+	let config = Config::load(&config_path);
+	let identity = {
+		let private_key = PrivateKey::from_string(config.privateKey.as_slice()).unwrap();
+		PrivateIdentity::from_private_key(&private_key).unwrap()
 	};
 
-	println!("Private key: {}", identity.private_key.as_string());
 	println!("Public key:  {}", identity.public_key.as_string());
 	println!("Address:     {}", identity.address);
 	
