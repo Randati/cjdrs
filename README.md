@@ -22,7 +22,9 @@ cd ..
 git clone https://github.com/Randati/cjdrs.git
 cd cjdrs
 
-cargo build           # Build
-cargo test            # Run tests
-sudo ./target/cjdrs   # Run
+cargo build               # Build
+cargo test                # Run tests
+./target/cjdrs init       # Generate configuration file
+editor cjdrs.conf         # Edit configuration
+sudo ./target/cjdrs run   # Run
 ```
