@@ -14,8 +14,8 @@ pub struct Tun {
 
 
 impl Tun {
-	pub fn new(address: &Address) -> Tun {
-		let tun = TunTap::create(Tun);
+	pub fn new(name: &str, address: &Address) -> Tun {
+		let tun = TunTap::create_named(Tun, name);
 		let fd = tun.file.as_raw_fd();
 
 		tun.add_address(address.as_slice());

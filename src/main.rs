@@ -51,7 +51,7 @@ fn main() {
 		let identity = PrivateIdentity::generate(&mut rng);
 		
 		let config = Config::get_default(&identity);
-		config.write(&config_path);
+		config.write(&config_path).unwrap();
 
 		println!("Created new configuration file '{}'", config_path.display());
 		println!("Public key: {}", identity.public_key.as_string());
@@ -72,10 +72,14 @@ fn main() {
 	println!("Public key:  {}", identity.public_key.as_string());
 	println!("Address:     {}", identity.address);
 	
-	let tun_interface = interface::Tun::new(&identity.address);
+
+	let tun_interface = interface::Tun::new(
+		config.tunDevice.as_slice(),
+		&identity.address);
 	println!("Opened tun device '{}'", tun_interface.get_name());
 
-	let udp_interface = interface::Udp::create();
+	
+	let udp_interface = interface::Udp::create(config.udpBind.as_slice());
 
 
 	let router = Router::new(&identity.address);

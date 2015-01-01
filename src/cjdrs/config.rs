@@ -8,16 +8,16 @@ use PrivateIdentity;
 #[allow(non_snake_case)]
 pub struct Config {
 	pub privateKey: String,
-	// pub tunDevice: String,
-	// pub udpBind: String
+	pub tunDevice: String,
+	pub udpBind: String
 }
 
 impl Config {
 	pub fn get_default(identity: &PrivateIdentity) -> Config {
 		Config {
 			privateKey: identity.private_key.as_string(),
-			// tunDevice: "tun%d".to_string(),
-			// udpBind: "0.0.0.0:3300".to_string()
+			tunDevice: "tun%d".to_string(),
+			udpBind: "0.0.0.0:3300".to_string()
 		}
 	}
 

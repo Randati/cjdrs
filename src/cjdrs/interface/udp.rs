@@ -14,11 +14,11 @@ pub struct Udp {
 }
 
 impl Udp {
-	pub fn create() -> Udp {
+	pub fn create(bind: &str) -> Udp {
 		let send_sock = UdpSocket::v4().unwrap();
 		let recv_sock = UdpSocket::v4().unwrap();
 
-		let bind_addr = SockAddr::parse("0.0.0.0:3300".as_slice())
+		let bind_addr = SockAddr::parse(bind)
 			.expect("could not parse InetAddr for localhost");
 
 		recv_sock.bind(&bind_addr).unwrap();
