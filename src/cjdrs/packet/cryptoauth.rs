@@ -11,7 +11,7 @@ pub const CRYPTOAUTH_HEADER_LENGTH: uint = 120;
 #[repr(packed)]
 pub struct Challenge {
 	challenge_type: u8,
-	lookup: [u8, ..7],
+	lookup: [u8; 7],
 	require_auth_and_derivation_count: BigEndian<u16>,
 	additional: BigEndian<u16>
 }
@@ -27,10 +27,10 @@ impl Challenge {
 pub struct CryptoAuthHeader {
 	stage: BigEndian<u32>,
 	auth_challenge: Challenge,
-	nonce: [u8, ..24],
-	public_key: [u8, ..PUB_KEY_SIZE],
-	authenticator: [u8, ..16],
-	encrypted_temp_key: [u8, ..32]
+	nonce: [u8; 24],
+	public_key: [u8; PUB_KEY_SIZE],
+	authenticator: [u8; 16],
+	encrypted_temp_key: [u8; 32]
 }
 
 

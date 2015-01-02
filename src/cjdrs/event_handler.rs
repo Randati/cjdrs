@@ -49,7 +49,7 @@ impl mio::Handler<uint, ()> for EventHandler {
 	fn readable(&mut self, _event_loop: &mut mio::EventLoop<uint, ()>,
 	            token: mio::Token, _hint: mio::event::ReadHint) {
 
-		let mut buffer = [0u8, ..1500];
+		let mut buffer = [0u8; 1500];
 
 		let maybe_task = match token {
 			TUN_INCOMING => self.tun_interface.receive(&mut buffer),

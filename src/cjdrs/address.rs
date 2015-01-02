@@ -10,7 +10,7 @@ const ADDRESS_SIZE: uint = 16;
 
 #[deriving(Copy, Clone, Eq, PartialEq, Hash)]
 pub struct Address {
-	bytes: [u8, ..ADDRESS_SIZE]
+	bytes: [u8; ADDRESS_SIZE]
 }
 
 impl Address {
@@ -19,7 +19,7 @@ impl Address {
 		slice[0] == 0xFC
 	}
 
-	pub fn from_bytes(bytes: &[u8, ..ADDRESS_SIZE]) -> Option<Address> {
+	pub fn from_bytes(bytes: &[u8; ADDRESS_SIZE]) -> Option<Address> {
 		if Address::is_valid(bytes.as_slice()) {
 			Some(Address { bytes: *bytes })
 		} else {
@@ -29,7 +29,7 @@ impl Address {
 
 	pub fn from_slice(slice: &[u8]) -> Option<Address> {
 		if Address::is_valid(slice) {
-			let mut bytes = [0u8, ..ADDRESS_SIZE];
+			let mut bytes = [0u8; ADDRESS_SIZE];
 			copy_memory(&mut bytes, slice);
 			Some(Address { bytes: bytes })
 		} else {
@@ -50,7 +50,7 @@ impl Address {
 
 
 	#[inline]
-	pub fn as_u64_be(&self) -> [u64, ..2] {
+	pub fn as_u64_be(&self) -> [u64; 2] {
 		[
 			unsafe { *mem::transmute::<*const u8, *const u64>(self.bytes.slice_from(0).as_ptr()) }.to_be(),
 			unsafe { *mem::transmute::<*const u8, *const u64>(self.bytes.slice_from(8).as_ptr()) }.to_be(),
@@ -58,7 +58,7 @@ impl Address {
 	}
 
 	#[inline]
-	pub fn as_u32_be(&self) -> [u32, ..4] {
+	pub fn as_u32_be(&self) -> [u32; 4] {
 		[
 			unsafe { *mem::transmute::<*const u8, *const u32>(self.bytes.slice_from( 0).as_ptr()) }.to_be(),
 			unsafe { *mem::transmute::<*const u8, *const u32>(self.bytes.slice_from( 4).as_ptr()) }.to_be(),
@@ -68,7 +68,7 @@ impl Address {
 	}
 
 	#[inline]
-	pub fn as_u16_be(&self) -> [u16, ..8] {
+	pub fn as_u16_be(&self) -> [u16; 8] {
 		[
 			unsafe { *mem::transmute::<*const u8, *const u16>(self.bytes.slice_from( 0).as_ptr()) }.to_be(),
 			unsafe { *mem::transmute::<*const u8, *const u16>(self.bytes.slice_from( 2).as_ptr()) }.to_be(),
@@ -82,7 +82,7 @@ impl Address {
 	}
 
 	#[inline]
-	pub fn as_u64_le(&self) -> [u64, ..2] {
+	pub fn as_u64_le(&self) -> [u64; 2] {
 		[
 			unsafe { *mem::transmute::<*const u8, *const u64>(self.bytes.slice_from(0).as_ptr()) }.to_le(),
 			unsafe { *mem::transmute::<*const u8, *const u64>(self.bytes.slice_from(8).as_ptr()) }.to_le(),
@@ -90,7 +90,7 @@ impl Address {
 	}
 
 	#[inline]
-	pub fn as_u32_le(&self) -> [u32, ..4] {
+	pub fn as_u32_le(&self) -> [u32; 4] {
 		[
 			unsafe { *mem::transmute::<*const u8, *const u32>(self.bytes.slice_from( 0).as_ptr()) }.to_le(),
 			unsafe { *mem::transmute::<*const u8, *const u32>(self.bytes.slice_from( 4).as_ptr()) }.to_le(),
@@ -100,7 +100,7 @@ impl Address {
 	}
 
 	#[inline]
-	pub fn as_u16_le(&self) -> [u16, ..8] {
+	pub fn as_u16_le(&self) -> [u16; 8] {
 		[
 			unsafe { *mem::transmute::<*const u8, *const u16>(self.bytes.slice_from( 0).as_ptr()) }.to_le(),
 			unsafe { *mem::transmute::<*const u8, *const u16>(self.bytes.slice_from( 2).as_ptr()) }.to_le(),

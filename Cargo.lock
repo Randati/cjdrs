@@ -2,28 +2,28 @@
 name = "cjdrs"
 version = "0.0.1"
 dependencies = [
- "docopt_macros 0.6.20 (git+git://github.com/docopt/docopt.rs)",
+ "docopt_macros 0.6.21 (git+git://github.com/docopt/docopt.rs)",
  "mio 0.0.1 (git+https://github.com/carllerche/mio.git)",
- "rustc-serialize 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rustc-serialize 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "sodiumoxide 0.0.1 (git+https://github.com/dnaq/sodiumoxide.git)",
  "tuntap 0.0.1 (git+https://github.com/Randati/tuntap-rust.git)",
 ]
 
 [[package]]
 name = "docopt"
-version = "0.6.20"
-source = "git+git://github.com/docopt/docopt.rs#338f1e66c4ee6433092a45a12e624bb309706101"
+version = "0.6.21"
+source = "git+git://github.com/docopt/docopt.rs#1119531d2b43c9e87911bee2d0dbb08bb1c39c15"
 dependencies = [
- "regex 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
- "rustc-serialize 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
+ "regex 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rustc-serialize 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
 name = "docopt_macros"
-version = "0.6.20"
-source = "git+git://github.com/docopt/docopt.rs#338f1e66c4ee6433092a45a12e624bb309706101"
+version = "0.6.21"
+source = "git+git://github.com/docopt/docopt.rs#1119531d2b43c9e87911bee2d0dbb08bb1c39c15"
 dependencies = [
- "docopt 0.6.20 (git+git://github.com/docopt/docopt.rs)",
+ "docopt 0.6.21 (git+git://github.com/docopt/docopt.rs)",
 ]
 
 [[package]]
@@ -41,7 +41,7 @@ name = "log"
 version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
- "regex 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "regex 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -57,16 +57,16 @@ dependencies = [
 [[package]]
 name = "nix"
 version = "0.1.0"
-source = "git+https://github.com/carllerche/nix-rust#898674f93c2a4df6a8e2c9e07ed509ddb3d4e866"
+source = "git+https://github.com/carllerche/nix-rust#5bb9518aa029fc24da3fa71103d320919f2dd60c"
 
 [[package]]
 name = "regex"
-version = "0.1.4"
+version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "rustc-serialize"
-version = "0.1.5"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
@@ -88,5 +88,5 @@ dependencies = [
 [[package]]
 name = "tuntap"
 version = "0.0.1"
-source = "git+https://github.com/Randati/tuntap-rust.git#75870a9977f46aa32ba7de3af31164b130f6e415"
+source = "git+https://github.com/Randati/tuntap-rust.git#4fbb6043b63a186ddd8ad923948352a433b57fe0"
 

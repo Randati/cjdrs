@@ -10,7 +10,7 @@ pub const PUB_KEY_SIZE: uint = 32;
 
 
 #[deriving(Copy, Clone, Eq, PartialEq, Hash)]
-pub struct PrivateKey([u8, ..PRIV_KEY_SIZE]);
+pub struct PrivateKey([u8; PRIV_KEY_SIZE]);
 
 impl PrivateKey {
 	pub fn from_string(string: &str) -> Option<PrivateKey> {
@@ -21,7 +21,7 @@ impl PrivateKey {
 				}
 
 				let buffer = {
-					let mut buffer = [0u8, ..PRIV_KEY_SIZE];
+					let mut buffer = [0u8; PRIV_KEY_SIZE];
 					buffer.clone_from_slice(bytes.as_slice());
 					buffer
 				};
@@ -44,14 +44,14 @@ impl PrivateKey {
 
 
 #[deriving(Copy, Clone, Eq, PartialEq, Hash)]
-pub struct PublicKey([u8, ..PUB_KEY_SIZE]);
+pub struct PublicKey([u8; PUB_KEY_SIZE]);
 
 impl PublicKey {
 	pub fn from_slice(slice: &[u8]) -> PublicKey {
 		assert_eq!(slice.len(), PUB_KEY_SIZE);
 
 		let buffer = {
-			let mut buffer = [0u8, ..PUB_KEY_SIZE];
+			let mut buffer = [0u8; PUB_KEY_SIZE];
 			buffer.clone_from_slice(slice);
 			buffer
 		};
@@ -96,7 +96,7 @@ impl PrivateIdentity {
 	pub fn generate<R: Rng>(rng: &mut R) -> PrivateIdentity {
 		loop {
 			let private_key = {
-				let mut private_key_buf = [0, ..PRIV_KEY_SIZE];
+				let mut private_key_buf = [0; PRIV_KEY_SIZE];
 				rng.fill_bytes(private_key_buf.as_mut_slice());
 				PrivateKey(private_key_buf)
 			};

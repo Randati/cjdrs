@@ -14,8 +14,8 @@ pub struct IPv6Header {
 	payload_length: BigEndian<u16>,
 	next_header: u8,
 	hop_limit: u8,
-	source_addr: [u8, ..16],
-	destination_addr: [u8, ..16]
+	source_addr: [u8; 16],
+	destination_addr: [u8; 16]
 }
 
 impl IPv6Header {

@@ -4,7 +4,7 @@ use std::char;
 
 static NUM_TO_ASCII: &'static str = "0123456789bcdfghjklmnpqrstuvwxyz";
 
-static ASCII_TO_NUM: [u8,  ..128] = [
+static ASCII_TO_NUM: [u8; 128] = [
 	255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
 	255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
 	255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
@@ -27,7 +27,7 @@ pub fn encode(bytes: &[u8]) -> String {
 
 	for chunk in bytes.chunks(5) {
 		let buf = {
-			let mut buf = [0u8, ..5];
+			let mut buf = [0u8; 5];
 			buf.clone_from_slice(chunk);
 			buf
 		};
@@ -62,7 +62,7 @@ pub fn decode(encoded: &str) -> Option<Vec<u8>> {
 
 	for chunk in encoded.chunks(8) {
 		let buf = {
-			let mut buf = [0u8, ..8];
+			let mut buf = [0u8; 8];
 			for (i, &c) in chunk.iter().enumerate() {
 				if c >= 128 { return None; }
 				let b = ASCII_TO_NUM[c as uint];
