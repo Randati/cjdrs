@@ -1,8 +1,9 @@
+use std::mem::size_of;
 use Address;
 use packet::{ParseResult, Packet, buffer_to_type};
 use util::BigEndian;
 
-pub const IPV6_HEADER_LENGTH: uint = 40;
+#[cfg(test)] pub const IPV6_HEADER_LENGTH: uint = 40;
 
 
 
@@ -43,7 +44,7 @@ impl<'a> IPv6<'a> {
 		}
 
 
-		let data = buffer.slice_from(IPV6_HEADER_LENGTH);
+		let data = buffer.slice_from(size_of::<IPv6Header>());
 
 		Ok(IPv6 {
 			slice: buffer,

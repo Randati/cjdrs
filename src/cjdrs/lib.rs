@@ -17,6 +17,7 @@ pub use identity::{
 pub use interface::NetInterface;
 pub use route::Route;
 pub use router::Router;
+pub use util::debug;
 
 pub mod crypto;
 pub mod encoding_scheme;

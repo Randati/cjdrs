@@ -44,7 +44,7 @@ impl PrivateKey {
 
 
 #[deriving(Copy, Clone, Eq, PartialEq, Hash)]
-pub struct PublicKey([u8; PUB_KEY_SIZE]);
+pub struct PublicKey(pub [u8; PUB_KEY_SIZE]);
 
 impl PublicKey {
 	pub fn from_slice(slice: &[u8]) -> PublicKey {

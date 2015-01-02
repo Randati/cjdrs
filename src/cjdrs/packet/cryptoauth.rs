@@ -1,9 +1,12 @@
-use std::mem::size_of;
+use std::mem::{size_of, transmute};
+use std::raw::Slice;
+use crypto::{SharedSecret, Nonce, CryptoBox};
 use packet::{ParseResult, Packet, buffer_to_type};
 use identity::{PublicKey, PUB_KEY_SIZE};
 use util::BigEndian;
+use debug::as_hex;
 
-pub const CRYPTOAUTH_HEADER_LENGTH: uint = 120;
+#[cfg(test)] pub const CRYPTOAUTH_HEADER_LENGTH: uint = 120;
 
 
 
@@ -19,6 +22,10 @@ pub struct Challenge {
 impl Challenge {
 	pub fn require_auth(&self) -> bool {
 		self.require_auth_and_derivation_count.val() >> 15 != 0
+	}
+
+	pub fn derivations(&self) -> u16 {
+		self.require_auth_and_derivation_count.val() & (!0 >> 1)
 	}
 }
 
@@ -44,16 +51,25 @@ impl<'a> CryptoAuth<'a> {
 		match stage_or_nonce.val() {
 			0 | 1 => {
 				let header: &CryptoAuthHeader = try!(buffer_to_type(buffer));
+				let data = buffer.slice_from(size_of::<CryptoAuthHeader>());
+
+				println!("");
+				println!("Stage:                  0x{:08X}", header.stage.val());
 				println!("Auth challenge");
-				println!("    Challenge type: {}", header.auth_challenge.challenge_type);
-				println!("    Lookup:         {}", as_hex(&header.auth_challenge.lookup));
-				println!("    Require auth:   {}", header.auth_challenge.require_auth());
+				println!("    Challenge type:     {}", header.auth_challenge.challenge_type);
+				println!("    Lookup:             {}", as_hex(&header.auth_challenge.lookup));
+				println!("    Require auth:       {}", header.auth_challenge.require_auth());
+				println!("    Derivations:        {}", header.auth_challenge.derivations());
+				println!("    Additional:         0x{:04X}", header.auth_challenge.additional.val());
 				println!("Nonce:                  {}", as_hex(&header.nonce));
 				println!("Perm public key:        {}", PublicKey::from_slice(&header.public_key).as_string());
 				println!("Poly1305 authenticator: {}", as_hex(&header.authenticator));
 				println!("Temporary public key:   {}", as_hex(&header.encrypted_temp_key));
+				println!("Data:                   {}", as_hex(data));
+				println!("");
 				
-				let data = buffer.slice_from(size_of::<CryptoAuthHeader>());
+
+
 				Ok(CryptoAuth {
 					slice: buffer,
 					header: header,
@@ -66,18 +82,30 @@ impl<'a> CryptoAuth<'a> {
 			}
 		}
 	}
-}
 
-
-fn as_hex(slice: &[u8]) -> String {
-	let mut ret = "".to_string();
-	ret.push_str(format!("({})[", slice.len()).as_slice());
-	for &b in slice.iter() {
-		let s = format!("{:02X} ", b);
-		ret.push_str(s.as_slice());
+	pub fn challenge(&self) -> &Challenge {
+		&self.header.auth_challenge
 	}
-	ret + "]"
+
+	pub fn public_key(&self) -> PublicKey {
+		PublicKey(self.header.public_key)
+	}
+
+	pub fn decrypt(&mut self, shared_secret: &SharedSecret) -> Option<Vec<u8>> {
+		let encrypted_part: &[u8] = unsafe {
+			transmute(Slice {
+				data: &self.header.authenticator,
+				len: 16 + 32 + self.data.len()
+			})
+		};
+
+		CryptoBox::decrypt(
+			encrypted_part,
+			&Nonce::Hers(self.header.nonce),
+			shared_secret)
+	}
 }
+
 
 
 

@@ -87,6 +87,7 @@ fn main() {
 
 	let mut mio_loop: mio::EventLoop<uint, ()> = mio::EventLoop::new().unwrap();
 	let event_handler = EventHandler::new(&mut mio_loop,
+		identity,
 		tun_interface,
 		udp_interface,
 		router).ok().expect("Couldn't create the event handler");

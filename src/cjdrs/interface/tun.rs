@@ -44,8 +44,8 @@ impl EventReceiver for Tun {
 
 		match packet {
 			Ok(tun_packet) => {
-				let data = tun_packet.get_data().get_data();
-				Some(Task::HandleOutgoingPacket(data))
+				let ipv6_packet = tun_packet.get_data();
+				Some(Task::HandleOutgoingPacket(*ipv6_packet))
 			},
 			Err(e) => {
 				println!("Received an invalid packet from tun interface: {}", e);

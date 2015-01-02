@@ -1,8 +1,9 @@
+use std::mem::size_of;
 use packet::{ParseResult, Packet, buffer_to_type};
 use packet;
 use util::BigEndian;
 
-pub const TUN_HEADER_LENGTH: uint = 4;
+#[cfg(test)] pub const TUN_HEADER_LENGTH: uint = 4;
 
 
 
@@ -31,12 +32,15 @@ impl<'a> Tun<'a> {
 			return Err("Tun packet not IPv6");
 		}
 
-		let data = try!(packet::IPv6::from_buffer(buffer.slice_from(TUN_HEADER_LENGTH)));
+		let payload = {
+			let data_slice = buffer.slice_from(size_of::<TunHeader>());
+			try!(packet::IPv6::from_buffer(data_slice))
+		};
 
 		Ok(Tun {
 			slice: buffer,
 			header: header,
-			data: data
+			data: payload
 		})
 	}
 
