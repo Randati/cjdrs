@@ -4,6 +4,8 @@ use sodiumoxide::crypto::hash::sha256;
 use PrivateKey;
 use PublicKey;
 
+pub use sodiumoxide::randombytes::{randombytes, randombytes_into};
+
 
 
 #[deriving(Copy, Eq, PartialEq)]

@@ -6,7 +6,6 @@ extern crate "rustc-serialize" as rustc_serialize;
 extern crate docopt;
 #[phase(plugin)] extern crate docopt_macros;
 
-#[cfg(not(test))] use std::rand::OsRng;
 #[cfg(not(test))] use docopt::Docopt;
 #[cfg(not(test))] use cjdrs::Config;
 #[cfg(not(test))] use cjdrs::{PrivateKey, PrivateIdentity};
@@ -35,20 +34,15 @@ Configuration file defaults to 'cjdrs.conf' if not given.
 #[cfg(not(test))]
 fn main() {
 	let args: Args = Args::docopt().decode().unwrap_or_else(|e| e.exit());
+	let config_path = Path::new(args.flag_cfg);
 
 	cjdrs::init();
 
-	let mut rng = match OsRng::new() {
-		Err(e) => panic!("No random number generator available: {}", e),
-		Ok(r) => r
-	};
-
-	let config_path = Path::new(args.flag_cfg);
 
 
 	// Generate new configuraion file
 	if args.cmd_init {
-		let identity = PrivateIdentity::generate(&mut rng);
+		let identity = PrivateIdentity::generate();
 		
 		let config = Config::get_default(&identity);
 		config.write(&config_path).unwrap();

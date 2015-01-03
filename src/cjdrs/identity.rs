@@ -1,7 +1,7 @@
-use std::rand::Rng;
-use sodiumoxide::crypto::scalarmult::curve25519;
 use rustc_serialize::hex::{FromHex, ToHex};
+use sodiumoxide::crypto::scalarmult::curve25519;
 use Address;
+use crypto;
 use util::base32;
 
 
@@ -93,11 +93,11 @@ pub struct PrivateIdentity {
 }
 
 impl PrivateIdentity {
-	pub fn generate<R: Rng>(rng: &mut R) -> PrivateIdentity {
+	pub fn generate() -> PrivateIdentity {
 		loop {
 			let private_key = {
 				let mut private_key_buf = [0; PRIV_KEY_SIZE];
-				rng.fill_bytes(private_key_buf.as_mut_slice());
+				crypto::randombytes_into(&mut private_key_buf);
 				PrivateKey(private_key_buf)
 			};
 
@@ -146,7 +146,6 @@ impl PublicIdentity {
 
 #[cfg(test)]
 mod tests {
-	use std::rand::OsRng;
 	use identity::{
 		PrivateKey,
 		PrivateIdentity};
@@ -156,7 +155,7 @@ mod tests {
 
 	#[test]
 	fn test_private_generate() {
-		let identity = PrivateIdentity::generate(&mut OsRng::new().unwrap());
+		let identity = PrivateIdentity::generate();
 		assert_eq!(identity.address.as_slice()[0], 0xFC);
 	}
 
@@ -185,10 +184,8 @@ mod tests {
 
 	#[bench]
 	fn bench_generate_identity(b: &mut Bencher) {
-		let mut rng = OsRng::new().unwrap();
-
 		b.iter(|| {
-			PrivateIdentity::generate(&mut rng)
+			PrivateIdentity::generate()
 		})
 	}
 }
