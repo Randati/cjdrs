@@ -1,5 +1,5 @@
 use rustc_serialize::Encodable;
-use rustc_serialize::json::{mod, PrettyEncoder};
+use rustc_serialize::json::{self, PrettyEncoder};
 use std::io::{File, IoResult};
 use std::io::fs::PathExtensions;
 use PrivateIdentity;
