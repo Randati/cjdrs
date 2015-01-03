@@ -10,7 +10,7 @@ use debug::as_hex;
 
 
 
-#[deriving(Copy, Clone, Eq, PartialEq)]
+#[derive(Copy, Clone, Eq, PartialEq)]
 #[repr(packed)]
 pub struct Challenge {
 	challenge_type: u8,
@@ -29,7 +29,7 @@ impl Challenge {
 	}
 }
 
-#[deriving(Copy, Clone, Eq, PartialEq)]
+#[derive(Copy, Clone, Eq, PartialEq)]
 #[repr(packed)]
 pub struct CryptoAuthHeader {
 	stage: BigEndian<u32>,

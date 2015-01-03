@@ -8,7 +8,7 @@ pub use sodiumoxide::randombytes::{randombytes, randombytes_into};
 
 
 
-#[deriving(Copy, Eq, PartialEq)]
+#[derive(Copy, Eq, PartialEq)]
 pub struct PasswordHash([u8; 32]);
 
 impl PasswordHash {
@@ -64,7 +64,7 @@ impl SharedSecret {
 
 
 
-#[deriving(Copy, Eq, PartialEq)]
+#[derive(Copy, Eq, PartialEq)]
 pub enum Nonce {
 	Mine([u8; 24]),
 	Hers([u8; 24])
@@ -81,7 +81,7 @@ impl Nonce {
 
 
 
-#[deriving(Copy)]
+#[derive(Copy)]
 pub struct CryptoBox;
 
 impl CryptoBox {

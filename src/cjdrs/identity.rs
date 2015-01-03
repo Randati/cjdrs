@@ -9,7 +9,7 @@ pub const PRIV_KEY_SIZE: uint = 32;
 pub const PUB_KEY_SIZE: uint = 32;
 
 
-#[deriving(Copy, Clone, Eq, PartialEq, Hash)]
+#[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub struct PrivateKey([u8; PRIV_KEY_SIZE]);
 
 impl PrivateKey {
@@ -43,7 +43,7 @@ impl PrivateKey {
 }
 
 
-#[deriving(Copy, Clone, Eq, PartialEq, Hash)]
+#[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub struct PublicKey(pub [u8; PUB_KEY_SIZE]);
 
 impl PublicKey {
@@ -85,7 +85,7 @@ impl PublicKey {
 }
 
 
-#[deriving(Copy, Clone, Eq, PartialEq, Hash)]
+#[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub struct PrivateIdentity {
 	pub private_key: PrivateKey,
 	pub public_key: PublicKey,
@@ -124,7 +124,7 @@ impl PrivateIdentity {
 }
 
 
-#[deriving(Copy, Clone, Eq, PartialEq, Hash)]
+#[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub struct PublicIdentity {
 	pub public_key: PublicKey,
 	pub address: Address

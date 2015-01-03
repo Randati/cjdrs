@@ -8,7 +8,7 @@ use PublicKey;
 const ADDRESS_SIZE: uint = 16;
 
 
-#[deriving(Copy, Clone, Eq, PartialEq, Hash)]
+#[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub struct Address {
 	bytes: [u8; ADDRESS_SIZE]
 }

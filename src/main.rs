@@ -13,7 +13,7 @@ extern crate docopt;
 #[cfg(not(test))] use cjdrs::Router;
 #[cfg(not(test))] use cjdrs::EventHandler;
 
-docopt!(Args deriving Show, "
+docopt!(Args derive Show, "
 Usage: cjdrs --help
        cjdrs init [--cfg=<file>]
        cjdrs run [--cfg=<file>]

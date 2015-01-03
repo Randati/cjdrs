@@ -2,7 +2,7 @@ use std::num::Int;
 use std::fmt;
 use std::u64;
 
-#[deriving(Copy, Clone, Eq, PartialEq)]
+#[derive(Copy, Clone, Eq, PartialEq)]
 pub struct Route {
 	bits: u64
 }

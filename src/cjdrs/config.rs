@@ -4,7 +4,7 @@ use std::io::{File, IoResult};
 use std::io::fs::PathExtensions;
 use PrivateIdentity;
 
-#[deriving(RustcEncodable, RustcDecodable)]
+#[derive(RustcEncodable, RustcDecodable)]
 #[allow(non_snake_case)]
 pub struct Config {
 	pub privateKey: String,
