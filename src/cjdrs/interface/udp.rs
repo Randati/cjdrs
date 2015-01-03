@@ -32,23 +32,7 @@ impl Udp {
 }
 
 impl NetInterface for Udp {
-	fn send_message(&self, msg: &str) {
-		unimplemented!();
-	}
-
-	fn receive_message(&self) -> String {
-		unimplemented!();
-	}
-}
-
-
-impl EventReceiver for Udp {
-	fn register(&self, event_loop: &mut mio::EventLoop<uint, ()>, token: mio::Token)
-	           -> mio::MioResult<()> {
-		event_loop.register_opt(&self.recv_sock, token, event::READABLE, event::EDGE)
-	}
-
-	fn receive<'a>(&'a mut self, buffer: &'a mut [u8]) -> Option<Task> {
+	fn receive_message<'a>(&'a mut self, buffer: &'a mut [u8]) -> Option<Task> {
 		let len = self.recv_sock.read_slice(buffer).unwrap().unwrap();
 		let data = buffer.slice_to(len);
 
@@ -61,5 +45,17 @@ impl EventReceiver for Udp {
 				None
 			}
 		}
+	}
+}
+
+
+impl EventReceiver for Udp {
+	fn register(&self, event_loop: &mut mio::EventLoop<uint, ()>, token: mio::Token)
+	           -> mio::MioResult<()> {
+		event_loop.register_opt(&self.recv_sock, token, event::READABLE, event::EDGE)
+	}
+
+	fn receive<'a>(&'a mut self, buffer: &'a mut [u8]) -> Option<Task> {
+		self.receive_message(buffer)
 	}
 }

@@ -1,13 +1,10 @@
 use mio;
 use crypto::{PasswordHash, SharedSecret};
 use debug::as_hex;
-use interface;
+use interface::NetInterface;
 use packet;
 use PrivateIdentity;
 use Router;
-
-const TUN_INCOMING: mio::Token = mio::Token(1);
-const UDP_INCOMING: mio::Token = mio::Token(2);
 
 
 pub enum Task<'a> {
@@ -23,45 +20,41 @@ pub trait EventReceiver {
 }
 
 
-pub struct EventHandler {
+pub struct EventHandler<'a> {
 	my_identity: PrivateIdentity,
-	tun_interface: interface::Tun,
-	udp_interface: interface::Udp,
+	interfaces: Vec<Box<NetInterface + 'a>>,
 	router: Router
 }
 
-impl EventHandler {
-	pub fn new(event_loop: &mut mio::EventLoop<uint, ()>,
-	           my_identity: PrivateIdentity,
-	           tun_interface: interface::Tun,
-	           udp_interface: interface::Udp,
-	           router: Router) -> mio::MioResult<EventHandler> {
-		
-		let event_handler = EventHandler {
-			my_identity: my_identity,
-			tun_interface: tun_interface,
-			udp_interface: udp_interface,
-			router: router
-		};
-		
-		try!(event_handler.tun_interface.register(event_loop, TUN_INCOMING));
-		try!(event_handler.udp_interface.register(event_loop, UDP_INCOMING));
+impl<'a> EventHandler<'a> {
+	pub fn new(my_identity: PrivateIdentity,
+	           interfaces: Vec<Box<NetInterface + 'a>>,
+	           router: Router) -> EventHandler<'a> {
 
-		Ok(event_handler)
+		EventHandler {
+			my_identity: my_identity,
+			interfaces: interfaces,
+			router: router
+		}
+	}
+
+	pub fn register_handlers(&self, event_loop: &mut mio::EventLoop<uint, ()>)
+	                         -> mio::MioResult<()> {
+		for (i, interface) in self.interfaces.iter().enumerate() {
+			try!(interface.register(event_loop, mio::Token(i)));
+		}
+		Ok(())
 	}
 }
 
-impl mio::Handler<uint, ()> for EventHandler {
+impl<'a> mio::Handler<uint, ()> for EventHandler<'a> {
 	fn readable(&mut self, _event_loop: &mut mio::EventLoop<uint, ()>,
 	            token: mio::Token, _hint: mio::event::ReadHint) {
 
 		let mut buffer = [0u8; 1500];
 
-		let maybe_task = match token {
-			TUN_INCOMING => self.tun_interface.receive(&mut buffer),
-			UDP_INCOMING => self.udp_interface.receive(&mut buffer),
-			_ => panic!("Unknown event type {}", token)
-		};
+		let interface_idx = token.as_uint();
+		let maybe_task = self.interfaces[interface_idx].receive(&mut buffer);
 
 		if let Some(task) = maybe_task {
 			match task {

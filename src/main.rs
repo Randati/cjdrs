@@ -9,7 +9,7 @@ extern crate docopt;
 #[cfg(not(test))] use docopt::Docopt;
 #[cfg(not(test))] use cjdrs::Config;
 #[cfg(not(test))] use cjdrs::{PrivateKey, PrivateIdentity};
-#[cfg(not(test))] use cjdrs::interface;
+#[cfg(not(test))] use cjdrs::interface::{mod, NetInterface};
 #[cfg(not(test))] use cjdrs::Router;
 #[cfg(not(test))] use cjdrs::EventHandler;
 
@@ -59,6 +59,7 @@ fn init_config(config_path: &Path) {
 
 #[cfg(not(test))]
 fn run(config: &Config) {
+	// Create identity
 	let my_identity = {
 		let private_key = PrivateKey::from_string(config.privateKey.as_slice()).unwrap();
 		PrivateIdentity::from_private_key(&private_key).unwrap()
@@ -68,6 +69,7 @@ fn run(config: &Config) {
 	println!("Address:    {}", my_identity.address);
 	
 
+	// Turn on interfaces
 	let tun_interface = interface::Tun::new(
 		config.tunDevice.as_slice(),
 		&my_identity.address);
@@ -75,16 +77,26 @@ fn run(config: &Config) {
 
 	let udp_interface = interface::Udp::create(config.udpBind.as_slice());
 
+	let interfaces: Vec<Box<NetInterface>> = vec![
+		(box tun_interface) as Box<NetInterface>,
+		(box udp_interface) as Box<NetInterface>
+	];
+
+
 	let router = Router::new(&my_identity.address);
 
 
+	// Start up the event loop
 	let mut mio_loop: mio::EventLoop<uint, ()> = mio::EventLoop::new().unwrap();
-	let event_handler = EventHandler::new(&mut mio_loop,
-		my_identity,
-		tun_interface,
-		udp_interface,
-		router).ok().expect("Couldn't create the event handler");
 	
+	let event_handler = EventHandler::new(
+		my_identity,
+		interfaces,
+		router);
+
+	event_handler.register_handlers(&mut mio_loop)
+		.ok().expect("Couldn't create the event handler");
+
 	if let Err(e) = mio_loop.run(event_handler) {
 		panic!("Error while running event loop: {}", e.error);
 	}
