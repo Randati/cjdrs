@@ -75,7 +75,7 @@ impl<'a> mio::Handler<uint, ()> for EventHandler<'a> {
 
 				},
 				Task::HandleOutgoingPacket(ipv6_packet) => {
-					let destination = ipv6_packet.get_destination();
+					let destination = ipv6_packet.get_destination().unwrap();
 					println!("Handling outgoing packet to {}", destination);
 					
 					let route = self.router.get_route(&destination);

@@ -3,6 +3,8 @@ use sodiumoxide::crypto::scalarmult::curve25519;
 use Address;
 use crypto;
 use util::base32;
+use CjdrsResult;
+use CjdrsError;
 
 
 pub const PRIV_KEY_SIZE: uint = 32;
@@ -13,11 +15,11 @@ pub const PUB_KEY_SIZE: uint = 32;
 pub struct PrivateKey([u8; PRIV_KEY_SIZE]);
 
 impl PrivateKey {
-	pub fn from_string(string: &str) -> Option<PrivateKey> {
+	pub fn from_string(string: &str) -> CjdrsResult<PrivateKey> {
 		match string.from_hex() {
 			Ok(bytes) => {
 				if bytes.len() != PRIV_KEY_SIZE {
-					return None;
+					fail!(CjdrsError::InvalidPrivateKey(None));
 				}
 
 				let buffer = {
@@ -26,9 +28,9 @@ impl PrivateKey {
 					buffer
 				};
 
-				Some(PrivateKey(buffer))
+				Ok(PrivateKey(buffer))
 			}
-			Err(_) => None
+			Err(e) => Err(CjdrsError::InvalidPrivateKey(Some(e)))
 		}
 	}
 
@@ -59,18 +61,21 @@ impl PublicKey {
 		PublicKey(buffer)
 	}
 
-	pub fn from_string(key_str: &str) -> Option<PublicKey> {
+	pub fn from_string(key_str: &str) -> CjdrsResult<PublicKey> {
 		if key_str.len() != 52 + 2 {
-			None
+			fail!(CjdrsError::InvalidPublicKey);
 		} else if !key_str.ends_with(".k") {
-			None
-		} else {
-			let hex_str = key_str.slice_to(52);
+			fail!(CjdrsError::InvalidPublicKey);
+		}
 
-			base32::decode(hex_str).map(|bytes| {
+		let hex_str = key_str.slice_to(52);
+
+		match base32::decode(hex_str) {
+			Some(bytes) => {
 				assert_eq!(bytes.len(), PUB_KEY_SIZE);
-				PublicKey::from_slice(bytes.as_slice())
-			})
+				Ok(PublicKey::from_slice(bytes.as_slice()))
+			},
+			None => Err(CjdrsError::InvalidPublicKey)
 		}
 	}
 

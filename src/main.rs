@@ -6,12 +6,15 @@ extern crate "rustc-serialize" as rustc_serialize;
 extern crate docopt;
 #[phase(plugin)] extern crate docopt_macros;
 
+#[cfg(not(test))] use std::{os, io};
 #[cfg(not(test))] use docopt::Docopt;
+#[cfg(not(test))] use cjdrs::CjdrsResult;
 #[cfg(not(test))] use cjdrs::Config;
-#[cfg(not(test))] use cjdrs::{PrivateKey, PrivateIdentity};
+#[cfg(not(test))] use cjdrs::EventHandler;
 #[cfg(not(test))] use cjdrs::interface::{mod, NetInterface};
 #[cfg(not(test))] use cjdrs::Router;
-#[cfg(not(test))] use cjdrs::EventHandler;
+#[cfg(not(test))] use cjdrs::{PrivateKey, PrivateIdentity};
+
 
 docopt!(Args deriving Show, "
 Usage: cjdrs --help
@@ -29,39 +32,55 @@ Options:
 Configuration file defaults to 'cjdrs.conf' if not given.
 ");
 
+
 #[cfg(not(test))]
 fn main() {
+	if let Err(e) = choose_command() {
+		os::set_exit_status(1);
+	
+		let mut stderr = io::stdio::stderr();
+    	writeln!(&mut stderr, "Error: {}", e).unwrap();
+	}
+}
+
+
+#[cfg(not(test))]
+fn choose_command() -> CjdrsResult<()> {
 	let args: Args = Args::docopt().decode().unwrap_or_else(|e| e.exit());
 	let config_path = Path::new(args.flag_cfg);
 
 	cjdrs::init();
 
 	if args.cmd_init {
-		init_config(&config_path);
+		init_config(&config_path)
 	} else {
 		assert!(args.cmd_run);
-		let config = Config::load(&config_path);
-		run(&config);
+		let config = try!(Config::load(&config_path));
+		run_cjdrs(&config)
 	}
 }
 
+
 #[cfg(not(test))]
-fn init_config(config_path: &Path) {
+fn init_config(config_path: &Path) -> CjdrsResult<()> {
 	let identity = PrivateIdentity::generate();
 		
 	let config = Config::get_default(&identity);
-	config.write(config_path).unwrap();
+	try!(config.write(config_path));
 
 	println!("Created a new configuration file '{}'", config_path.display());
 	println!("Public key: {}", identity.public_key.as_string());
 	println!("Address:    {}", identity.address);
+
+	Ok(())
 }
 
+
 #[cfg(not(test))]
-fn run(config: &Config) {
+fn run_cjdrs(config: &Config) -> CjdrsResult<()> {
 	// Create identity
 	let my_identity = {
-		let private_key = PrivateKey::from_string(config.privateKey.as_slice()).unwrap();
+		let private_key = try!(PrivateKey::from_string(config.privateKey.as_slice()));
 		PrivateIdentity::from_private_key(&private_key).unwrap()
 	};
 
@@ -75,7 +94,7 @@ fn run(config: &Config) {
 		&my_identity.address);
 	println!("Opened tun device '{}'", tun_interface.get_name());
 
-	let udp_interface = interface::Udp::create(config.udpBind.as_slice());
+	let udp_interface = try!(interface::Udp::create(config.udpBind.as_slice()));
 
 	let interfaces: Vec<Box<NetInterface>> = vec![
 		(box tun_interface) as Box<NetInterface>,
@@ -87,17 +106,15 @@ fn run(config: &Config) {
 
 
 	// Start up the event loop
-	let mut mio_loop: mio::EventLoop<uint, ()> = mio::EventLoop::new().unwrap();
+	let mut mio_loop: mio::EventLoop<uint, ()> = try!(mio::EventLoop::new());
 	
 	let event_handler = EventHandler::new(
 		my_identity,
 		interfaces,
 		router);
 
-	event_handler.register_handlers(&mut mio_loop)
-		.ok().expect("Couldn't create the event handler");
+	try!(event_handler.register_handlers(&mut mio_loop));
+	try!(mio_loop.run(event_handler));
 
-	if let Err(e) = mio_loop.run(event_handler) {
-		panic!("Error while running event loop: {}", e.error);
-	}
+	Ok(())
 }

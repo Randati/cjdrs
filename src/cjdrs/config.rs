@@ -1,9 +1,11 @@
 use rustc_serialize::Encodable;
 use rustc_serialize::json::{mod, PrettyEncoder};
-use std::io::{File, IoResult};
+use std::io::File;
 use std::io::fs::PathExtensions;
 use crypto::random_password;
 use PrivateIdentity;
+use CjdrsResult;
+use CjdrsError;
 
 #[deriving(RustcEncodable, RustcDecodable)]
 #[allow(non_snake_case)]
@@ -26,31 +28,20 @@ impl Config {
 		}
 	}
 
-	pub fn write(&self, path: &Path) -> IoResult<()> {
+	pub fn write(&self, path: &Path) -> CjdrsResult<()> {
 		if path.exists() {
-			panic!("Config file '{}' exists already.", path.display());
+			fail!(CjdrsError::ConfigAlreadyExists(path.clone()));
 		}
 
-		let mut file = match File::create(path) {
-			Ok(file) => file,
-			Err(why) => panic!("Couldn't open config file '{}': {}", path.display(), why),
-		};
+		let mut file = try!(File::create(path));
 
 		let mut encoder = PrettyEncoder::new(&mut file);
-		self.encode(&mut encoder)
+		Ok(try!(self.encode(&mut encoder)))
 	}
 
-	pub fn load(path: &Path) -> Config {
-		let mut file = match File::open(path) {
-			Ok(file) => file,
-			Err(why) => panic!("Couldn't open config file '{}': {}", path.display(), why),
-		};
-
-		let content = match file.read_to_string() {
-			Ok(string) => string,
-			Err(why) => panic!("Couldn't read config file '{}': {}", path.display(), why),
-		};
-
-		json::decode(content.as_slice()).unwrap()
+	pub fn load(path: &Path) -> CjdrsResult<Config> {
+		let mut file = try!(File::open(path));
+		let content = try!(file.read_to_string());
+		Ok(try!(json::decode(content.as_slice())))
 	}
 }

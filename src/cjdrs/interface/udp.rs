@@ -2,6 +2,8 @@ use mio;
 use mio::net::SockAddr;
 use mio::net::udp::UdpSocket;
 use mio::{event, IoReader};
+use CjdrsResult;
+use CjdrsError;
 use EventReceiver;
 use NetInterface;
 use Task;
@@ -14,20 +16,21 @@ pub struct Udp {
 }
 
 impl Udp {
-	pub fn create(bind: &str) -> Udp {
-		let send_sock = UdpSocket::v4().unwrap();
-		let recv_sock = UdpSocket::v4().unwrap();
+	pub fn create(bind: &str) -> CjdrsResult<Udp> {
+		let send_sock = try!(UdpSocket::v4());
+		let recv_sock = try!(UdpSocket::v4());
 
-		let bind_addr = SockAddr::parse(bind)
-			.expect("could not parse InetAddr for localhost");
+		let bind_addr = match SockAddr::parse(bind) {
+			Some(a) => a,
+			None => fail!(CjdrsError::InvalidBindAddress(bind.to_string()))
+		};
 
-		recv_sock.bind(&bind_addr).unwrap();
+		try!(recv_sock.bind(&bind_addr));
 
-
-		Udp {
+		Ok(Udp {
 			send_sock: send_sock,
 			recv_sock: recv_sock
-		}
+		})
 	}
 }
 

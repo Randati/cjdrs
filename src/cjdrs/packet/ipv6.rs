@@ -57,8 +57,8 @@ impl<'a> IPv6<'a> {
 		self.data
 	}
 
-	pub fn get_destination(&self) -> Address {
-		Address::from_slice(&self.header.destination_addr).unwrap()
+	pub fn get_destination(&self) -> Option<Address> {
+		Address::from_slice(&self.header.destination_addr)
 	}
 }
 
