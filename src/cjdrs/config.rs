@@ -2,6 +2,7 @@ use rustc_serialize::Encodable;
 use rustc_serialize::json::{mod, PrettyEncoder};
 use std::io::{File, IoResult};
 use std::io::fs::PathExtensions;
+use crypto::random_password;
 use PrivateIdentity;
 
 #[deriving(RustcEncodable, RustcDecodable)]
@@ -9,7 +10,8 @@ use PrivateIdentity;
 pub struct Config {
 	pub privateKey: String,
 	pub tunDevice: String,
-	pub udpBind: String
+	pub udpBind: String,
+	pub authorizedPasswords: Vec<String>
 }
 
 impl Config {
@@ -17,7 +19,10 @@ impl Config {
 		Config {
 			privateKey: identity.private_key.as_string(),
 			tunDevice: "tun%d".to_string(),
-			udpBind: "0.0.0.0:3300".to_string()
+			udpBind: "0.0.0.0:3300".to_string(),
+			authorizedPasswords: vec![
+				random_password()
+			]
 		}
 	}
 

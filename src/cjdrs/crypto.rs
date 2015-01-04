@@ -7,6 +7,21 @@ use PublicKey;
 pub use sodiumoxide::randombytes::{randombytes, randombytes_into};
 
 
+const PASSWORD_CHARS: &'static str = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+pub fn random_password() -> String {
+	let length = 32;
+	let mut password = "".to_string();
+	while password.len() < length {
+		let n = randombytes(1)[0] as uint;
+		if n < PASSWORD_CHARS.len() {
+			password.push(PASSWORD_CHARS.as_bytes()[n] as char);
+		}
+	}
+	password
+}
+
+
 
 #[deriving(Copy, Eq, PartialEq)]
 pub struct PasswordHash([u8; 32]);
