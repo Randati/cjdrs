@@ -1,3 +1,4 @@
+use std::fmt;
 use rustc_serialize::hex::{FromHex, ToHex};
 use sodiumoxide::crypto::scalarmult::curve25519;
 use Address;
@@ -40,6 +41,12 @@ impl PrivateKey {
 
 	pub fn as_string(&self) -> String {
 		self.as_slice().to_hex()
+	}
+}
+
+impl fmt::Show for PrivateKey {
+	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+		write!(f, "{}", self.as_string())
 	}
 }
 
@@ -88,6 +95,12 @@ impl PublicKey {
 
 	pub fn as_string(&self) -> String {
 		base32::encode(self.as_slice()) + ".k"
+	}
+}
+
+impl fmt::Show for PublicKey {
+	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+		write!(f, "{}", self.as_string())
 	}
 }
 

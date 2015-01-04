@@ -2,11 +2,15 @@ use std::{io, error, fmt};
 use mio;
 use rustc_serialize::{hex, json};
 use identity::PRIV_KEY_SIZE;
+use PrivateKey;
+use PublicKey;
 
 use CjdrsError::{
 	ConfigAlreadyExists,
 	InvalidPrivateKey,
 	InvalidPublicKey,
+	NoAddressForPrivateKey,
+	NoAddressForPublicKey,
 	InvalidBindAddress,
 	JsonDecodingError,
 	MioError,
@@ -19,6 +23,8 @@ pub enum CjdrsError {
 	ConfigAlreadyExists(Path),
 	InvalidPrivateKey(Option<hex::FromHexError>),
 	InvalidPublicKey,
+	NoAddressForPrivateKey(PrivateKey),
+	NoAddressForPublicKey(PublicKey),
 	InvalidBindAddress(String),
 	JsonDecodingError(json::DecoderError),
 	MioError(mio::MioError),
@@ -32,6 +38,8 @@ impl error::Error for CjdrsError {
 			ConfigAlreadyExists(..) => "Configuration file aready exists",
 			InvalidPrivateKey(..) => "Invalid private key",
 			InvalidPublicKey => "Invalid public key",
+			NoAddressForPrivateKey(..) => "Private key has no valid IP address",
+			NoAddressForPublicKey(..) => "Public key has no valid IP address",
 			InvalidBindAddress(..) => "Invalid bind address",
 			JsonDecodingError(..) => "JSON decoding error",
 			MioError(..) => "Event handler error",
@@ -53,6 +61,12 @@ impl error::Error for CjdrsError {
 			InvalidPublicKey =>
 				Some("Public key must be 54 character base32 encoded string including '.k'".to_string()),
 			
+			NoAddressForPrivateKey(ref k) =>
+				Some(format!("Private key '{}'", k)),
+
+			NoAddressForPublicKey(ref k) =>
+				Some(format!("Public key '{}'", k)),
+
 			InvalidBindAddress(ref s) =>
 				Some(format!("Bind address '{}' is invalid", s)),
 			

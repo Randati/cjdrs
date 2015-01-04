@@ -8,6 +8,7 @@ extern crate docopt;
 
 #[cfg(not(test))] use std::{os, io};
 #[cfg(not(test))] use docopt::Docopt;
+#[cfg(not(test))] use cjdrs::CjdrsError;
 #[cfg(not(test))] use cjdrs::CjdrsResult;
 #[cfg(not(test))] use cjdrs::Config;
 #[cfg(not(test))] use cjdrs::EventHandler;
@@ -69,7 +70,7 @@ fn init_config(config_path: &Path) -> CjdrsResult<()> {
 	try!(config.write(config_path));
 
 	println!("Created a new configuration file '{}'", config_path.display());
-	println!("Public key: {}", identity.public_key.as_string());
+	println!("Public key: {}", identity.public_key);
 	println!("Address:    {}", identity.address);
 
 	Ok(())
@@ -81,10 +82,11 @@ fn run_cjdrs(config: &Config) -> CjdrsResult<()> {
 	// Create identity
 	let my_identity = {
 		let private_key = try!(PrivateKey::from_string(config.privateKey.as_slice()));
-		PrivateIdentity::from_private_key(&private_key).unwrap()
+		try!(PrivateIdentity::from_private_key(&private_key).ok_or(
+			CjdrsError::NoAddressForPrivateKey(private_key)))
 	};
 
-	println!("Public key: {}", my_identity.public_key.as_string());
+	println!("Public key: {}", my_identity.public_key);
 	println!("Address:    {}", my_identity.address);
 	
 
