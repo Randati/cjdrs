@@ -33,7 +33,7 @@ pub fn compress(number: u32) -> u64 {
 				n => ((n - 1) << 1) as u64
 			}
 		},
-		_ => panic!()
+		_ => unreachable!()
 	}
 }
 
@@ -55,7 +55,7 @@ pub fn decompress(label: u64) -> u32 {
 				n           => (n + 1) as u32
 			}
 		},
-		_ => panic!()
+		_ => unreachable!()
 	}
 }
 

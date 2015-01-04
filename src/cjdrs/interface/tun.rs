@@ -3,6 +3,7 @@ use mio;
 use tuntap::{TunTap, Tun};
 use Address;
 use EventReceiver;
+use NetInterface;
 use packet;
 use Task;
 
@@ -31,14 +32,8 @@ impl Tun {
 	}
 }
 
-
-impl EventReceiver for Tun {
-	fn register(&self, event_loop: &mut mio::EventLoop<uint, ()>, token: mio::Token)
-	           -> mio::MioResult<()> {
-		event_loop.register(self, token)
-	}
-
-	fn receive<'a>(&'a mut self, buffer: &'a mut [u8]) -> Option<Task> {
+impl NetInterface for Tun {
+	fn receive_message<'a>(&'a mut self, buffer: &'a mut [u8]) -> Option<Task> {
 		let data_slice = self.tun.read(buffer).ok().expect("Reading did not succeed");
 		let packet = packet::Tun::from_buffer(data_slice);
 
@@ -52,6 +47,17 @@ impl EventReceiver for Tun {
 				None
 			}
 		}
+	}
+}
+
+impl EventReceiver for Tun {
+	fn register(&self, event_loop: &mut mio::EventLoop<uint, ()>, token: mio::Token)
+	           -> mio::MioResult<()> {
+		event_loop.register(self, token)
+	}
+
+	fn receive<'a>(&'a mut self, buffer: &'a mut [u8]) -> Option<Task> {
+		self.receive_message(buffer)
 	}
 }
 

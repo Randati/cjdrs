@@ -44,7 +44,10 @@ pub fn encode(bytes: &[u8]) -> String {
 		];
 
 		for &c in chars.slice_to(bytes_needed_to_encode(chunk.len())).iter() {
-			ret.push(char::from_u32(c as u32).unwrap());
+			match char::from_u32(c as u32) {
+				Some(c) => ret.push(c),
+				None => unreachable!()
+			}
 		}
 	}
 

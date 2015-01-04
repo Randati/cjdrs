@@ -2,6 +2,8 @@ use mio;
 use mio::net::SockAddr;
 use mio::net::udp::UdpSocket;
 use mio::{event, IoReader};
+use CjdrsResult;
+use CjdrsError;
 use EventReceiver;
 use NetInterface;
 use Task;
@@ -14,41 +16,26 @@ pub struct Udp {
 }
 
 impl Udp {
-	pub fn create(bind: &str) -> Udp {
-		let send_sock = UdpSocket::v4().unwrap();
-		let recv_sock = UdpSocket::v4().unwrap();
+	pub fn create(bind: &str) -> CjdrsResult<Udp> {
+		let send_sock = try!(UdpSocket::v4());
+		let recv_sock = try!(UdpSocket::v4());
 
-		let bind_addr = SockAddr::parse(bind)
-			.expect("could not parse InetAddr for localhost");
+		let bind_addr = match SockAddr::parse(bind) {
+			Some(a) => a,
+			None => fail!(CjdrsError::InvalidBindAddress(bind.to_string()))
+		};
 
-		recv_sock.bind(&bind_addr).unwrap();
+		try!(recv_sock.bind(&bind_addr));
 
-
-		Udp {
+		Ok(Udp {
 			send_sock: send_sock,
 			recv_sock: recv_sock
-		}
+		})
 	}
 }
 
 impl NetInterface for Udp {
-	fn send_message(&self, msg: &str) {
-		unimplemented!();
-	}
-
-	fn receive_message(&self) -> String {
-		unimplemented!();
-	}
-}
-
-
-impl EventReceiver for Udp {
-	fn register(&self, event_loop: &mut mio::EventLoop<uint, ()>, token: mio::Token)
-	           -> mio::MioResult<()> {
-		event_loop.register_opt(&self.recv_sock, token, event::READABLE, event::EDGE)
-	}
-
-	fn receive<'a>(&'a mut self, buffer: &'a mut [u8]) -> Option<Task> {
+	fn receive_message<'a>(&'a mut self, buffer: &'a mut [u8]) -> Option<Task> {
 		let len = self.recv_sock.read_slice(buffer).unwrap().unwrap();
 		let data = buffer.slice_to(len);
 
@@ -61,5 +48,17 @@ impl EventReceiver for Udp {
 				None
 			}
 		}
+	}
+}
+
+
+impl EventReceiver for Udp {
+	fn register(&self, event_loop: &mut mio::EventLoop<uint, ()>, token: mio::Token)
+	           -> mio::MioResult<()> {
+		event_loop.register_opt(&self.recv_sock, token, event::READABLE, event::EDGE)
+	}
+
+	fn receive<'a>(&'a mut self, buffer: &'a mut [u8]) -> Option<Task> {
+		self.receive_message(buffer)
 	}
 }

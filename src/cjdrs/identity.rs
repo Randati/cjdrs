@@ -1,8 +1,11 @@
+use std::fmt;
 use rustc_serialize::hex::{FromHex, ToHex};
 use sodiumoxide::crypto::scalarmult::curve25519;
 use Address;
 use crypto;
 use util::base32;
+use CjdrsResult;
+use CjdrsError;
 
 
 pub const PRIV_KEY_SIZE: uint = 32;
@@ -13,11 +16,11 @@ pub const PUB_KEY_SIZE: uint = 32;
 pub struct PrivateKey([u8; PRIV_KEY_SIZE]);
 
 impl PrivateKey {
-	pub fn from_string(string: &str) -> Option<PrivateKey> {
+	pub fn from_string(string: &str) -> CjdrsResult<PrivateKey> {
 		match string.from_hex() {
 			Ok(bytes) => {
 				if bytes.len() != PRIV_KEY_SIZE {
-					return None;
+					fail!(CjdrsError::InvalidPrivateKey(None));
 				}
 
 				let buffer = {
@@ -26,15 +29,14 @@ impl PrivateKey {
 					buffer
 				};
 
-				Some(PrivateKey(buffer))
+				Ok(PrivateKey(buffer))
 			}
-			Err(_) => None
+			Err(e) => Err(CjdrsError::InvalidPrivateKey(Some(e)))
 		}
 	}
 
-	pub fn as_slice(&self) -> &[u8] {
-		let &PrivateKey(ref slice) = self;
-		slice
+	pub fn as_slice(&self) -> &[u8; PRIV_KEY_SIZE] {
+		&self.0
 	}
 
 	pub fn as_string(&self) -> String {
@@ -42,11 +44,20 @@ impl PrivateKey {
 	}
 }
 
+impl fmt::Show for PrivateKey {
+	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+		write!(f, "{}", self.as_string())
+	}
+}
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
-pub struct PublicKey(pub [u8; PUB_KEY_SIZE]);
+pub struct PublicKey([u8; PUB_KEY_SIZE]);
 
 impl PublicKey {
+	pub fn from_buffer(buffer: &[u8; PUB_KEY_SIZE]) -> PublicKey {
+		PublicKey(*buffer)
+	}
+
 	pub fn from_slice(slice: &[u8]) -> PublicKey {
 		assert_eq!(slice.len(), PUB_KEY_SIZE);
 
@@ -59,24 +70,26 @@ impl PublicKey {
 		PublicKey(buffer)
 	}
 
-	pub fn from_string(key_str: &str) -> Option<PublicKey> {
+	pub fn from_string(key_str: &str) -> CjdrsResult<PublicKey> {
 		if key_str.len() != 52 + 2 {
-			None
+			fail!(CjdrsError::InvalidPublicKey);
 		} else if !key_str.ends_with(".k") {
-			None
-		} else {
-			let hex_str = key_str.slice_to(52);
+			fail!(CjdrsError::InvalidPublicKey);
+		}
 
-			base32::decode(hex_str).map(|bytes| {
+		let hex_str = key_str.slice_to(52);
+
+		match base32::decode(hex_str) {
+			Some(bytes) => {
 				assert_eq!(bytes.len(), PUB_KEY_SIZE);
-				PublicKey::from_slice(bytes.as_slice())
-			})
+				Ok(PublicKey::from_slice(bytes.as_slice()))
+			},
+			None => Err(CjdrsError::InvalidPublicKey)
 		}
 	}
 
-	pub fn as_slice(&self) -> &[u8] {
-		let &PublicKey(ref slice) = self;
-		slice
+	pub fn as_slice(&self) -> &[u8; PUB_KEY_SIZE] {
+		&self.0
 	}
 
 	pub fn as_string(&self) -> String {
@@ -84,6 +97,11 @@ impl PublicKey {
 	}
 }
 
+impl fmt::Show for PublicKey {
+	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+		write!(f, "{}", self.as_string())
+	}
+}
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub struct PrivateIdentity {
@@ -108,9 +126,9 @@ impl PrivateIdentity {
 	}
 
 	pub fn from_private_key(private_key: &PrivateKey) -> Option<PrivateIdentity> {
-		let input = curve25519::Scalar::from_slice(private_key.as_slice()).unwrap();
-		let public_key_buf = curve25519::scalarmult_base(&input);
-		let public_key = PublicKey::from_slice(public_key_buf.as_slice());
+		let input = curve25519::Scalar(*private_key.as_slice());
+		let public_key_buf = curve25519::scalarmult_base(&input).0;
+		let public_key = PublicKey::from_buffer(&public_key_buf);
 
 		match Address::from_public_key(&public_key) {
 			Some(address) => Some(PrivateIdentity {

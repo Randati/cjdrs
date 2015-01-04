@@ -1,4 +1,5 @@
 #![feature(globs)]
+#![feature(macro_rules)]
 
 #[cfg(test)] extern crate test;
 extern crate mio;
@@ -8,6 +9,7 @@ extern crate tuntap;
 
 pub use address::Address;
 pub use config::Config;
+pub use error::{CjdrsError, CjdrsResult};
 pub use event_handler::{EventHandler, EventReceiver, Task};
 pub use identity::{
 	PrivateIdentity,
@@ -19,6 +21,8 @@ pub use route::Route;
 pub use router::Router;
 pub use util::debug;
 
+mod macros;
+
 pub mod crypto;
 pub mod encoding_scheme;
 pub mod interface;
@@ -27,6 +31,7 @@ pub mod util;
 
 mod address;
 mod config;
+mod error;
 mod event_handler;
 mod identity;
 mod route;

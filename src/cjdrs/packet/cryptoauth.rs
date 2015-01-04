@@ -62,7 +62,7 @@ impl<'a> CryptoAuth<'a> {
 				println!("    Derivations:        {}", header.auth_challenge.derivations());
 				println!("    Additional:         0x{:04X}", header.auth_challenge.additional.val());
 				println!("Nonce:                  {}", as_hex(&header.nonce));
-				println!("Perm public key:        {}", PublicKey::from_slice(&header.public_key).as_string());
+				println!("Perm public key:        {}", PublicKey::from_slice(&header.public_key));
 				println!("Poly1305 authenticator: {}", as_hex(&header.authenticator));
 				println!("Temporary public key:   {}", as_hex(&header.encrypted_temp_key));
 				println!("Data:                   {}", as_hex(data));
@@ -88,7 +88,7 @@ impl<'a> CryptoAuth<'a> {
 	}
 
 	pub fn public_key(&self) -> PublicKey {
-		PublicKey(self.header.public_key)
+		PublicKey::from_buffer(&self.header.public_key)
 	}
 
 	pub fn decrypt(&mut self, shared_secret: &SharedSecret) -> Option<Vec<u8>> {
