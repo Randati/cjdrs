@@ -88,7 +88,7 @@ impl<'a> CryptoAuth<'a> {
 	}
 
 	pub fn public_key(&self) -> PublicKey {
-		PublicKey(self.header.public_key)
+		PublicKey::from_buffer(&self.header.public_key)
 	}
 
 	pub fn decrypt(&mut self, shared_secret: &SharedSecret) -> Option<Vec<u8>> {

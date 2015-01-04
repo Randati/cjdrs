@@ -11,7 +11,6 @@ impl<T: Int> BigEndian<T> {
 
 	#[inline]
 	pub fn val_be(&self) -> T {
-		let &BigEndian(v) = self;
-		v
+		self.0
 	}
 }

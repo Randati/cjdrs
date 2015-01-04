@@ -34,9 +34,8 @@ impl PrivateKey {
 		}
 	}
 
-	pub fn as_slice(&self) -> &[u8] {
-		let &PrivateKey(ref slice) = self;
-		slice
+	pub fn as_slice(&self) -> &[u8; PRIV_KEY_SIZE] {
+		&self.0
 	}
 
 	pub fn as_string(&self) -> String {
@@ -46,9 +45,13 @@ impl PrivateKey {
 
 
 #[deriving(Copy, Clone, Eq, PartialEq, Hash)]
-pub struct PublicKey(pub [u8; PUB_KEY_SIZE]);
+pub struct PublicKey([u8; PUB_KEY_SIZE]);
 
 impl PublicKey {
+	pub fn from_buffer(buffer: &[u8; PUB_KEY_SIZE]) -> PublicKey {
+		PublicKey(*buffer)
+	}
+
 	pub fn from_slice(slice: &[u8]) -> PublicKey {
 		assert_eq!(slice.len(), PUB_KEY_SIZE);
 
@@ -79,9 +82,8 @@ impl PublicKey {
 		}
 	}
 
-	pub fn as_slice(&self) -> &[u8] {
-		let &PublicKey(ref slice) = self;
-		slice
+	pub fn as_slice(&self) -> &[u8; PUB_KEY_SIZE] {
+		&self.0
 	}
 
 	pub fn as_string(&self) -> String {
@@ -113,9 +115,9 @@ impl PrivateIdentity {
 	}
 
 	pub fn from_private_key(private_key: &PrivateKey) -> Option<PrivateIdentity> {
-		let input = curve25519::Scalar::from_slice(private_key.as_slice()).unwrap();
-		let public_key_buf = curve25519::scalarmult_base(&input);
-		let public_key = PublicKey::from_slice(public_key_buf.as_slice());
+		let input = curve25519::Scalar(*private_key.as_slice());
+		let public_key_buf = curve25519::scalarmult_base(&input).0;
+		let public_key = PublicKey::from_buffer(&public_key_buf);
 
 		match Address::from_public_key(&public_key) {
 			Some(address) => Some(PrivateIdentity {

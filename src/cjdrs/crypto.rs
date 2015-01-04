@@ -33,8 +33,7 @@ impl PasswordHash {
 	}
 
 	fn as_slice(&self) -> &[u8] {
-		let &PasswordHash(ref hash) = self;
-		hash
+		&self.0
 	}
 }
 
@@ -46,8 +45,8 @@ impl SharedSecret {
 	pub fn without_password(my_private_key: &PrivateKey,
 	                        her_public_key: &PublicKey)
 	                        -> SharedSecret {
-		let public = crypto_box::PublicKey::from_slice(her_public_key.as_slice()).unwrap();
-		let secret = crypto_box::SecretKey::from_slice(my_private_key.as_slice()).unwrap();
+		let public = crypto_box::PublicKey(*her_public_key.as_slice());
+		let secret = crypto_box::SecretKey(*my_private_key.as_slice());
 		let key = crypto_box::precompute(&public, &secret);
 		SharedSecret(key)
 	}
@@ -57,8 +56,8 @@ impl SharedSecret {
 	                     password_hash: &PasswordHash)
 	                     -> SharedSecret {
 		let curve25519::GroupElement(mult_res) = curve25519::scalarmult(
-				&curve25519::Scalar::from_slice(my_private_key.as_slice()).unwrap(),
-				&curve25519::GroupElement::from_slice(her_public_key.as_slice()).unwrap());
+				&curve25519::Scalar(*my_private_key.as_slice()),
+				&curve25519::GroupElement(*her_public_key.as_slice()));
 		assert_eq!(mult_res.len(), 32);
 		
 		let mut hash_input_buffer = Vec::with_capacity(64);
@@ -67,13 +66,14 @@ impl SharedSecret {
 		assert_eq!(hash_input_buffer.len(), 64);
 
 		let sha256::Digest(hash) = sha256::hash(hash_input_buffer.as_slice());
-		let precomputed_key = crypto_box::PrecomputedKey::from_slice(hash.as_slice()).unwrap();
-		SharedSecret(precomputed_key)
+		match crypto_box::PrecomputedKey::from_slice(hash.as_slice()) {
+			Some(precomputed_key) => SharedSecret(precomputed_key),
+			None => unreachable!()
+		}
 	}
 
 	fn get_key(&self) -> &crypto_box::PrecomputedKey {
-		let &SharedSecret(ref key) = self;
-		key
+		&self.0
 	}
 }
 
