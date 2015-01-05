@@ -4,7 +4,7 @@ version = "0.0.1"
 dependencies = [
  "docopt_macros 0.6.22 (git+git://github.com/docopt/docopt.rs)",
  "mio 0.0.1 (git+https://github.com/carllerche/mio.git)",
- "rustc-serialize 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rustc-serialize 0.2.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "sodiumoxide 0.0.1 (git+https://github.com/dnaq/sodiumoxide.git)",
  "tuntap 0.0.1 (git+https://github.com/Randati/tuntap-rust.git)",
 ]
@@ -12,16 +12,16 @@ dependencies = [
 [[package]]
 name = "docopt"
 version = "0.6.22"
-source = "git+git://github.com/docopt/docopt.rs#1c1a4a13221186e9adc772e2a29c955994f60d21"
+source = "git+git://github.com/docopt/docopt.rs#e86033021591781d4b9b0334eef7e65016fe2802"
 dependencies = [
- "regex 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)",
- "rustc-serialize 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "regex 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rustc-serialize 0.2.4 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
 name = "docopt_macros"
 version = "0.6.22"
-source = "git+git://github.com/docopt/docopt.rs#1c1a4a13221186e9adc772e2a29c955994f60d21"
+source = "git+git://github.com/docopt/docopt.rs#e86033021591781d4b9b0334eef7e65016fe2802"
 dependencies = [
  "docopt 0.6.22 (git+git://github.com/docopt/docopt.rs)",
 ]
@@ -41,32 +41,32 @@ name = "log"
 version = "0.1.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
- "regex 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)",
+ "regex 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
 name = "mio"
 version = "0.0.1"
-source = "git+https://github.com/carllerche/mio.git#c3a4d21de2b252e1f59dbda9387502841cf18bf5"
+source = "git+https://github.com/carllerche/mio.git#e0559e0e1557c91dcc6698df0c790e3af52ca9f0"
 dependencies = [
  "log 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)",
- "nix 0.1.0 (git+https://github.com/carllerche/nix-rust)",
+ "nix 0.1.1 (git+https://github.com/carllerche/nix-rust)",
  "time 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
 name = "nix"
-version = "0.1.0"
-source = "git+https://github.com/carllerche/nix-rust#c82c8cced23256ebeeea978fda67abd976280425"
+version = "0.1.1"
+source = "git+https://github.com/carllerche/nix-rust#b82dac392092c946e4d9e1253afed690c41c36e4"
 
 [[package]]
 name = "regex"
-version = "0.1.7"
+version = "0.1.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "rustc-serialize"
-version = "0.2.3"
+version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
