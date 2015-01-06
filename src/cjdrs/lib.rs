@@ -36,7 +36,6 @@ mod event_handler;
 mod identity;
 mod route;
 mod router;
-mod switch;
 
 
 pub fn init() {
