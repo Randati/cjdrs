@@ -2,91 +2,91 @@
 name = "cjdrs"
 version = "0.0.1"
 dependencies = [
- "docopt_macros 0.6.22 (git+git://github.com/docopt/docopt.rs)",
+ "docopt_macros 0.6.30 (git+git://github.com/docopt/docopt.rs)",
  "mio 0.0.1 (git+https://github.com/carllerche/mio.git)",
- "rustc-serialize 0.2.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rustc-serialize 0.2.7 (registry+https://github.com/rust-lang/crates.io-index)",
  "sodiumoxide 0.0.1 (git+https://github.com/dnaq/sodiumoxide.git)",
  "tuntap 0.0.1 (git+https://github.com/Randati/tuntap-rust.git)",
 ]
 
 [[package]]
 name = "docopt"
-version = "0.6.22"
-source = "git+git://github.com/docopt/docopt.rs#e86033021591781d4b9b0334eef7e65016fe2802"
+version = "0.6.30"
+source = "git+git://github.com/docopt/docopt.rs#9801d525967794c0dc7c8ec7fd840d981275040b"
 dependencies = [
- "regex 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)",
- "rustc-serialize 0.2.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "regex 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rustc-serialize 0.2.7 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
 name = "docopt_macros"
-version = "0.6.22"
-source = "git+git://github.com/docopt/docopt.rs#e86033021591781d4b9b0334eef7e65016fe2802"
+version = "0.6.30"
+source = "git+git://github.com/docopt/docopt.rs#9801d525967794c0dc7c8ec7fd840d981275040b"
 dependencies = [
- "docopt 0.6.22 (git+git://github.com/docopt/docopt.rs)",
+ "docopt 0.6.30 (git+git://github.com/docopt/docopt.rs)",
 ]
 
 [[package]]
 name = "gcc"
-version = "0.1.3"
+version = "0.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "libsodium-sys"
 version = "0.0.1"
-source = "git+https://github.com/dnaq/sodiumoxide.git#15ea351b63f75127aa48180d0b2821c17d6e68d7"
+source = "git+https://github.com/dnaq/sodiumoxide.git#d56b1f816ae96ca8b2cebbf652ecffa656375ce6"
 
 [[package]]
 name = "log"
-version = "0.1.7"
+version = "0.1.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
- "regex 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "regex 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
 name = "mio"
 version = "0.0.1"
-source = "git+https://github.com/carllerche/mio.git#e0559e0e1557c91dcc6698df0c790e3af52ca9f0"
+source = "git+https://github.com/carllerche/mio.git#9a5c27f92c7dbf268ea1dad1fa0d68233c46918c"
 dependencies = [
- "log 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)",
+ "log 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)",
  "nix 0.1.1 (git+https://github.com/carllerche/nix-rust)",
- "time 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)",
+ "time 0.1.12 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
 name = "nix"
 version = "0.1.1"
-source = "git+https://github.com/carllerche/nix-rust#b82dac392092c946e4d9e1253afed690c41c36e4"
+source = "git+https://github.com/carllerche/nix-rust#f70a60e0b4dd670171a12fa98101ffc52f528eec"
 
 [[package]]
 name = "regex"
-version = "0.1.8"
+version = "0.1.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "rustc-serialize"
-version = "0.2.4"
+version = "0.2.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "sodiumoxide"
 version = "0.0.1"
-source = "git+https://github.com/dnaq/sodiumoxide.git#15ea351b63f75127aa48180d0b2821c17d6e68d7"
+source = "git+https://github.com/dnaq/sodiumoxide.git#d56b1f816ae96ca8b2cebbf652ecffa656375ce6"
 dependencies = [
  "libsodium-sys 0.0.1 (git+https://github.com/dnaq/sodiumoxide.git)",
 ]
 
 [[package]]
 name = "time"
-version = "0.1.9"
+version = "0.1.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
- "gcc 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "gcc 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
 name = "tuntap"
 version = "0.0.1"
-source = "git+https://github.com/Randati/tuntap-rust.git#eef3178a69f74ea197b9d513290903af6bb78d35"
+source = "git+https://github.com/Randati/tuntap-rust.git#425b9530c05003f9531b70cbdee5c4cb7bf40b41"
 
