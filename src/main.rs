@@ -1,10 +1,7 @@
-#![feature(phase)]
-
 extern crate cjdrs;
 extern crate mio;
 extern crate "rustc-serialize" as rustc_serialize;
 extern crate docopt;
-#[phase(plugin)] extern crate docopt_macros;
 
 #[cfg(not(test))] use std::{os, io};
 #[cfg(not(test))] use docopt::Docopt;
@@ -17,7 +14,7 @@ extern crate docopt;
 #[cfg(not(test))] use cjdrs::{PrivateKey, PrivateIdentity};
 
 
-docopt!(Args derive Show, "
+static USAGE: &'static str = "
 Usage: cjdrs --help
        cjdrs init [--cfg=<file>]
        cjdrs run [--cfg=<file>]
@@ -31,8 +28,14 @@ Options:
 2. Run 'cjdrs run' to start cjdrs.
 
 Configuration file defaults to 'cjdrs.conf' if not given.
-");
+";
 
+#[derive(RustcDecodable, Show)]
+struct Args {
+	cmd_init: bool,
+	cmd_run: bool,
+	flag_cfg: String,
+}
 
 #[cfg(not(test))]
 fn main() {
@@ -47,7 +50,7 @@ fn main() {
 
 #[cfg(not(test))]
 fn choose_command() -> CjdrsResult<()> {
-	let args: Args = Args::docopt().decode().unwrap_or_else(|e| e.exit());
+	let args: Args = Docopt::new(USAGE).and_then(|d| d.decode()).unwrap_or_else(|e| e.exit());
 	let config_path = Path::new(args.flag_cfg);
 
 	cjdrs::init();
