@@ -88,5 +88,5 @@ dependencies = [
 [[package]]
 name = "tuntap"
 version = "0.0.1"
-source = "git+https://github.com/Randati/tuntap-rust.git#425b9530c05003f9531b70cbdee5c4cb7bf40b41"
+source = "git+https://github.com/Randati/tuntap-rust.git#9119d59d8074d972c58b1b1e2e3bb85a6bc784b4"
 

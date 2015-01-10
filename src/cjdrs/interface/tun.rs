@@ -1,3 +1,4 @@
+use std::ffi::CString;
 use std::os::unix::prelude::AsRawFd;
 use mio;
 use tuntap::{TunTap, Tun};
@@ -16,7 +17,7 @@ pub struct Tun {
 
 impl Tun {
 	pub fn new(name: &str, address: &Address) -> Tun {
-		let tun = TunTap::create_named(Tun, name);
+		let tun = TunTap::create_named(Tun, &CString::from_slice(name.as_bytes()));
 		let fd = tun.file.as_raw_fd();
 
 		tun.add_address(address.as_slice());
@@ -28,7 +29,14 @@ impl Tun {
 	}
 
 	pub fn get_name(&self) -> String {
-		self.tun.get_name()
+		let name = self.tun.get_name();
+		let mut name_vec = Vec::with_capacity(name.len());
+		name_vec.push_all(name.as_bytes());
+
+		match String::from_utf8(name_vec) {
+			Ok(s) => s,
+			Err(e) => panic!(e)
+		}
 	}
 }
 
