@@ -16,6 +16,7 @@ extern crate docopt;
 #[cfg(not(test))] use cjdrs::{PrivateKey, PrivateIdentity};
 
 
+#[cfg(not(test))]
 static USAGE: &'static str = "
 Usage: cjdrs --help
        cjdrs init [--cfg=<file>]
