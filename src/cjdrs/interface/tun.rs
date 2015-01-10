@@ -51,7 +51,7 @@ impl NetInterface for Tun {
 }
 
 impl EventReceiver for Tun {
-	fn register(&self, event_loop: &mut mio::EventLoop<uint, ()>, token: mio::Token)
+	fn register(&self, event_loop: &mut mio::EventLoop<usize, ()>, token: mio::Token)
 	           -> mio::MioResult<()> {
 		event_loop.register(self, token)
 	}

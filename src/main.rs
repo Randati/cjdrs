@@ -108,7 +108,7 @@ fn run_cjdrs(config: &Config) -> CjdrsResult<()> {
 
 
 	// Start up the event loop
-	let mut mio_loop: mio::EventLoop<uint, ()> = try!(mio::EventLoop::new());
+	let mut mio_loop: mio::EventLoop<usize, ()> = try!(mio::EventLoop::new());
 	
 	let event_handler = EventHandler::new(
 		my_identity,

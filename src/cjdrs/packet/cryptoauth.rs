@@ -6,7 +6,7 @@ use identity::{PublicKey, PUB_KEY_SIZE};
 use util::BigEndian;
 use debug::as_hex;
 
-#[cfg(test)] pub const CRYPTOAUTH_HEADER_LENGTH: uint = 120;
+#[cfg(test)] pub const CRYPTOAUTH_HEADER_LENGTH: usize = 120;
 
 
 

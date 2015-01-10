@@ -6,7 +6,7 @@ use std::slice::bytes::copy_memory;
 use sodiumoxide::crypto::hash::sha512;
 use PublicKey;
 
-const ADDRESS_SIZE: uint = 16;
+const ADDRESS_SIZE: usize = 16;
 
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]

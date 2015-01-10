@@ -17,7 +17,7 @@ static ASCII_TO_NUM: [u8; 128] = [
 
 
 #[inline]
-pub fn bytes_needed_to_encode(data_len: uint) -> uint {
+pub fn bytes_needed_to_encode(data_len: usize) -> usize {
 	(data_len * 8 + 4) / 5
 }
 
@@ -33,14 +33,14 @@ pub fn encode(bytes: &[u8]) -> String {
 		};
 
 		let chars = [
-			ascii_bytes[  (buf[0] & 0b0001_1111) as uint],
-			ascii_bytes[(((buf[0] & 0b1110_0000) >> 5) | ((buf[1] & 0b0000_0011) << 3)) as uint],
-			ascii_bytes[ ((buf[1] & 0b0111_1100) >> 2) as uint],
-			ascii_bytes[(((buf[1] & 0b1000_0000) >> 7) | ((buf[2] & 0b0000_1111) << 1)) as uint],
-			ascii_bytes[(((buf[2] & 0b1111_0000) >> 4) | ((buf[3] & 0b0000_0001) << 4)) as uint],
-			ascii_bytes[ ((buf[3] & 0b0011_1110) >> 1) as uint],
-			ascii_bytes[(((buf[3] & 0b1100_0000) >> 6) | ((buf[4] & 0b0000_0111) << 2)) as uint],
-			ascii_bytes[ ((buf[4] & 0b1111_1000) >> 3) as uint]
+			ascii_bytes[  (buf[0] & 0b0001_1111) as usize],
+			ascii_bytes[(((buf[0] & 0b1110_0000) >> 5) | ((buf[1] & 0b0000_0011) << 3)) as usize],
+			ascii_bytes[ ((buf[1] & 0b0111_1100) >> 2) as usize],
+			ascii_bytes[(((buf[1] & 0b1000_0000) >> 7) | ((buf[2] & 0b0000_1111) << 1)) as usize],
+			ascii_bytes[(((buf[2] & 0b1111_0000) >> 4) | ((buf[3] & 0b0000_0001) << 4)) as usize],
+			ascii_bytes[ ((buf[3] & 0b0011_1110) >> 1) as usize],
+			ascii_bytes[(((buf[3] & 0b1100_0000) >> 6) | ((buf[4] & 0b0000_0111) << 2)) as usize],
+			ascii_bytes[ ((buf[4] & 0b1111_1000) >> 3) as usize]
 		];
 
 		for &c in chars.slice_to(bytes_needed_to_encode(chunk.len())).iter() {
@@ -55,7 +55,7 @@ pub fn encode(bytes: &[u8]) -> String {
 }
 
 #[inline]
-pub fn bytes_needed_to_decode(encoded_len: uint) -> uint {
+pub fn bytes_needed_to_decode(encoded_len: usize) -> usize {
 	encoded_len * 5 / 8
 }
 
@@ -68,7 +68,7 @@ pub fn decode(encoded: &str) -> Option<Vec<u8>> {
 			let mut buf = [0u8; 8];
 			for (i, &c) in chunk.iter().enumerate() {
 				if c >= 128 { return None; }
-				let b = ASCII_TO_NUM[c as uint];
+				let b = ASCII_TO_NUM[c as usize];
 				if b >= 32 { return None; }
 				buf[i] = b;
 			}

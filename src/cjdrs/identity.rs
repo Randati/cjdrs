@@ -8,8 +8,8 @@ use CjdrsResult;
 use CjdrsError;
 
 
-pub const PRIV_KEY_SIZE: uint = 32;
-pub const PUB_KEY_SIZE: uint = 32;
+pub const PRIV_KEY_SIZE: usize = 32;
+pub const PUB_KEY_SIZE: usize = 32;
 
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]

@@ -49,8 +49,8 @@ impl Route {
 	}
 
 	#[inline]
-	pub fn bit_len(&self) -> uint {
-		64 - self.bits.leading_zeros()
+	pub fn bit_len(&self) -> u8 {
+		64 - self.bits.leading_zeros() as u8
 	}
 }
 

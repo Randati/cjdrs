@@ -13,7 +13,7 @@ pub fn random_password() -> String {
 	let length = 32;
 	let mut password = "".to_string();
 	while password.len() < length {
-		let n = randombytes(1)[0] as uint;
+		let n = randombytes(1)[0] as usize;
 		if n < PASSWORD_CHARS.len() {
 			password.push(PASSWORD_CHARS.as_bytes()[n] as char);
 		}
