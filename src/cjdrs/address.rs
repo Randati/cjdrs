@@ -1,6 +1,7 @@
 use std::fmt;
 use std::mem;
 use std::num::Int;
+use std::cmp::Ordering;
 use std::slice::bytes::copy_memory;
 use sodiumoxide::crypto::hash::sha512;
 use PublicKey;
