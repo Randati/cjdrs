@@ -127,9 +127,9 @@ impl Address {
 		let d = cd.1.as_u64_be();
 
 		match (a[1] ^ b[1]).cmp(&(c[1] ^ d[1])) {
-			Less    => return Less,
-			Greater => return Greater,
-			Equal   => return (a[0] ^ b[0]).cmp(&(c[0] ^ d[0]))
+			Ordering::Less    => return Ordering::Less,
+			Ordering::Greater => return Ordering::Greater,
+			Ordering::Equal   => return (a[0] ^ b[0]).cmp(&(c[0] ^ d[0]))
 		}
 	}
 }
