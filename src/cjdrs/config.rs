@@ -1,6 +1,6 @@
 use rustc_serialize::Encodable;
 use rustc_serialize::json::{self, PrettyEncoder};
-use std::io::{File, IoResult};
+use std::io::File;
 use std::io::fs::PathExtensions;
 use crypto::random_password;
 use PrivateIdentity;
