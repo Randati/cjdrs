@@ -102,8 +102,8 @@ fn run_cjdrs(config: &Config) -> CjdrsResult<()> {
 	let udp_interface = try!(interface::Udp::create(config.udpBind.as_slice()));
 
 	let interfaces: Vec<Box<NetInterface>> = vec![
-		(box tun_interface) as Box<NetInterface>,
-		(box udp_interface) as Box<NetInterface>
+		Box::new(tun_interface) as Box<NetInterface>,
+		Box::new(udp_interface) as Box<NetInterface>,
 	];
 
 
