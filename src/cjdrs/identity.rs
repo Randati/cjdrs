@@ -44,7 +44,7 @@ impl PrivateKey {
 	}
 }
 
-impl fmt::Show for PrivateKey {
+impl fmt::String for PrivateKey {
 	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
 		write!(f, "{}", self.as_string())
 	}
@@ -97,7 +97,7 @@ impl PublicKey {
 	}
 }
 
-impl fmt::Show for PublicKey {
+impl fmt::String for PublicKey {
 	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
 		write!(f, "{}", self.as_string())
 	}

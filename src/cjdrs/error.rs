@@ -14,6 +14,7 @@ use CjdrsError::{
 	InvalidBindAddress,
 	JsonDecodingError,
 	MioError,
+	FmtError,
 	IoError,
 };
 
@@ -28,6 +29,7 @@ pub enum CjdrsError {
 	InvalidBindAddress(String),
 	JsonDecodingError(json::DecoderError),
 	MioError(mio::MioError),
+	FmtError(fmt::Error),
 	IoError(io::IoError),
 }
 
@@ -43,6 +45,7 @@ impl error::Error for CjdrsError {
 			InvalidBindAddress(..) => "Invalid bind address",
 			JsonDecodingError(..) => "JSON decoding error",
 			MioError(..) => "Event handler error",
+			FmtError(..) => "Formatting error",
 			IoError(..) => "I/O error",
 		}
 	}
@@ -53,7 +56,7 @@ impl error::Error for CjdrsError {
 				Some(format!("Path '{}'", path.display())),
 
 			InvalidPrivateKey(Some(ref e)) =>
-				Some(format!("{}", e)),
+				Some(format!("{:?}", e)),
 
 			InvalidPrivateKey(None) =>
 				Some(format!("Private key must be {} characters long", PRIV_KEY_SIZE * 2)),
@@ -71,13 +74,16 @@ impl error::Error for CjdrsError {
 				Some(format!("Bind address '{}' is invalid", s)),
 			
 			JsonDecodingError(ref e) =>
-				Some(format!("{}", e)),
+				Some(format!("{:?}", e)),
 			
 			MioError(ref e) =>
-				Some(format!("{}", e)),
+				Some(format!("{:?}", e)),
 			
+			FmtError(ref e) =>
+				Some(format!("{:?}", e)),
+
 			IoError(ref e) =>
-				Some(format!("{}", e)),
+				Some(format!("{:?}", e)),
 		}
 	}
 
@@ -104,6 +110,12 @@ impl fmt::Show for CjdrsError {
 impl error::FromError<io::IoError> for CjdrsError {
 	fn from_error(e: io::IoError) -> CjdrsError {
 		CjdrsError::IoError(e)
+	}
+}
+
+impl error::FromError<fmt::Error> for CjdrsError {
+	fn from_error(e: fmt::Error) -> CjdrsError {
+		CjdrsError::FmtError(e)
 	}
 }
 

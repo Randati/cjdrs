@@ -43,7 +43,7 @@ fn main() {
 		os::set_exit_status(1);
 	
 		let mut stderr = io::stdio::stderr();
-    	writeln!(&mut stderr, "Error: {}", e).unwrap();
+		writeln!(&mut stderr, "Error: {:?}", e).unwrap();
 	}
 }
 

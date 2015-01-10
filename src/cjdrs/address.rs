@@ -134,7 +134,7 @@ impl Address {
 	}
 }
 
-impl fmt::Show for Address {
+impl fmt::String for Address {
 	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
 		let b = &self.bytes;
 		write!(f,
