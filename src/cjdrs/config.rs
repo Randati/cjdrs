@@ -1,5 +1,5 @@
 use rustc_serialize::Encodable;
-use rustc_serialize::json::{mod, PrettyEncoder};
+use rustc_serialize::json::{self, PrettyEncoder};
 use std::io::File;
 use std::io::fs::PathExtensions;
 use crypto::random_password;
@@ -7,7 +7,7 @@ use PrivateIdentity;
 use CjdrsResult;
 use CjdrsError;
 
-#[deriving(RustcEncodable, RustcDecodable)]
+#[derive(RustcEncodable, RustcDecodable)]
 #[allow(non_snake_case)]
 pub struct Config {
 	pub privateKey: String,
@@ -33,10 +33,17 @@ impl Config {
 			fail!(CjdrsError::ConfigAlreadyExists(path.clone()));
 		}
 
-		let mut file = try!(File::create(path));
+		let encoded_str = {
+			let mut s = String::new();
+			{
+				let mut encoder = PrettyEncoder::new(&mut s);
+				try!(self.encode(&mut encoder));
+			}
+			s
+		};
 
-		let mut encoder = PrettyEncoder::new(&mut file);
-		Ok(try!(self.encode(&mut encoder)))
+		let mut file = try!(File::create(path));
+		Ok(try!(file.write_str(encoded_str.as_slice())))
 	}
 
 	pub fn load(path: &Path) -> CjdrsResult<Config> {

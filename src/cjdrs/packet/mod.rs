@@ -11,7 +11,7 @@ mod tun;
 pub type ParseResult<P> = Result<P, &'static str>;
 
 
-#[deriving(Copy, Clone, Eq, PartialEq)]
+#[derive(Copy, Clone, Eq, PartialEq)]
 pub struct Packet<'a, H: 'a, D> {
 	pub slice: &'a [u8],
 	pub header: &'a H,

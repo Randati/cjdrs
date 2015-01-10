@@ -3,11 +3,11 @@ use Address;
 use packet::{ParseResult, Packet, buffer_to_type};
 use util::BigEndian;
 
-#[cfg(test)] pub const IPV6_HEADER_LENGTH: uint = 40;
+#[cfg(test)] pub const IPV6_HEADER_LENGTH: usize = 40;
 
 
 
-#[deriving(Copy, Clone, Eq, PartialEq)]
+#[derive(Copy, Clone, Eq, PartialEq)]
 #[repr(packed)]
 pub struct IPv6Header {
 	version_class_flow: BigEndian<u16>,
@@ -20,8 +20,8 @@ pub struct IPv6Header {
 }
 
 impl IPv6Header {
-	fn get_version(&self) -> uint {
-		((self.version_class_flow.val() & 0xF000) >> 12) as uint
+	fn get_version(&self) -> u8 {
+		((self.version_class_flow.val() & 0xF000) >> 12) as u8
 	}
 }
 

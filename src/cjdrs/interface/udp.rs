@@ -53,7 +53,7 @@ impl NetInterface for Udp {
 
 
 impl EventReceiver for Udp {
-	fn register(&self, event_loop: &mut mio::EventLoop<uint, ()>, token: mio::Token)
+	fn register(&self, event_loop: &mut mio::EventLoop<usize, ()>, token: mio::Token)
 	           -> mio::MioResult<()> {
 		event_loop.register_opt(&self.recv_sock, token, event::READABLE, event::EDGE)
 	}

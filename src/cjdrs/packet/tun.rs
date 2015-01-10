@@ -3,11 +3,11 @@ use packet::{ParseResult, Packet, buffer_to_type};
 use packet;
 use util::BigEndian;
 
-#[cfg(test)] pub const TUN_HEADER_LENGTH: uint = 4;
+#[cfg(test)] pub const TUN_HEADER_LENGTH: usize = 4;
 
 
 
-#[deriving(Copy, Clone, Eq, PartialEq)]
+#[derive(Copy, Clone, Eq, PartialEq)]
 #[repr(packed)]
 pub struct TunHeader {
 	_unused: BigEndian<u16>,

@@ -1,6 +1,6 @@
 use std::num::Int;
 
-#[deriving(Copy, Clone, Eq, PartialEq)]
+#[derive(Copy, Clone, Eq, PartialEq)]
 pub struct BigEndian<T: Int>(T);
 
 impl<T: Int> BigEndian<T> {

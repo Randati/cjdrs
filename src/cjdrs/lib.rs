@@ -1,5 +1,4 @@
-#![feature(globs)]
-#![feature(macro_rules)]
+#![allow(unstable)]
 
 #[cfg(test)] extern crate test;
 extern crate mio;

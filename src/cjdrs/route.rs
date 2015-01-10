@@ -2,7 +2,7 @@ use std::num::Int;
 use std::fmt;
 use std::u64;
 
-#[deriving(Copy, Clone, Eq, PartialEq)]
+#[derive(Copy, Clone, Eq, PartialEq)]
 pub struct Route {
 	bits: u64
 }
@@ -49,12 +49,12 @@ impl Route {
 	}
 
 	#[inline]
-	pub fn bit_len(&self) -> uint {
-		64 - self.bits.leading_zeros()
+	pub fn bit_len(&self) -> u8 {
+		64 - self.bits.leading_zeros() as u8
 	}
 }
 
-impl fmt::Show for Route {
+impl fmt::String for Route {
 	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
 		write!(f, "{:064b}", self.bits)
 	}

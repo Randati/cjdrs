@@ -14,7 +14,7 @@ pub enum Task<'a> {
 
 
 pub trait EventReceiver {
-	fn register(&self, event_loop: &mut mio::EventLoop<uint, ()>, token: mio::Token)
+	fn register(&self, event_loop: &mut mio::EventLoop<usize, ()>, token: mio::Token)
 	           -> mio::MioResult<()>;
 	fn receive<'a>(&'a mut self, buffer: &'a mut [u8]) -> Option<Task>;
 }
@@ -38,7 +38,7 @@ impl<'a> EventHandler<'a> {
 		}
 	}
 
-	pub fn register_handlers(&self, event_loop: &mut mio::EventLoop<uint, ()>)
+	pub fn register_handlers(&self, event_loop: &mut mio::EventLoop<usize, ()>)
 	                         -> mio::MioResult<()> {
 		for (i, interface) in self.interfaces.iter().enumerate() {
 			try!(interface.register(event_loop, mio::Token(i)));
@@ -47,8 +47,8 @@ impl<'a> EventHandler<'a> {
 	}
 }
 
-impl<'a> mio::Handler<uint, ()> for EventHandler<'a> {
-	fn readable(&mut self, _event_loop: &mut mio::EventLoop<uint, ()>,
+impl<'a> mio::Handler<usize, ()> for EventHandler<'a> {
+	fn readable(&mut self, _event_loop: &mut mio::EventLoop<usize, ()>,
 	            token: mio::Token, _hint: mio::event::ReadHint) {
 
 		let mut buffer = [0u8; 1500];

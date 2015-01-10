@@ -1,14 +1,15 @@
 use std::fmt;
 use std::mem;
 use std::num::Int;
+use std::cmp::Ordering;
 use std::slice::bytes::copy_memory;
 use sodiumoxide::crypto::hash::sha512;
 use PublicKey;
 
-const ADDRESS_SIZE: uint = 16;
+const ADDRESS_SIZE: usize = 16;
 
 
-#[deriving(Copy, Clone, Eq, PartialEq, Hash)]
+#[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub struct Address {
 	bytes: [u8; ADDRESS_SIZE]
 }
@@ -126,14 +127,14 @@ impl Address {
 		let d = cd.1.as_u64_be();
 
 		match (a[1] ^ b[1]).cmp(&(c[1] ^ d[1])) {
-			Less    => return Less,
-			Greater => return Greater,
-			Equal   => return (a[0] ^ b[0]).cmp(&(c[0] ^ d[0]))
+			Ordering::Less    => return Ordering::Less,
+			Ordering::Greater => return Ordering::Greater,
+			Ordering::Equal   => return (a[0] ^ b[0]).cmp(&(c[0] ^ d[0]))
 		}
 	}
 }
 
-impl fmt::Show for Address {
+impl fmt::String for Address {
 	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
 		let b = &self.bytes;
 		write!(f,

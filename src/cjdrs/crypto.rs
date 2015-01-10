@@ -13,7 +13,7 @@ pub fn random_password() -> String {
 	let length = 32;
 	let mut password = "".to_string();
 	while password.len() < length {
-		let n = randombytes(1)[0] as uint;
+		let n = randombytes(1)[0] as usize;
 		if n < PASSWORD_CHARS.len() {
 			password.push(PASSWORD_CHARS.as_bytes()[n] as char);
 		}
@@ -23,7 +23,7 @@ pub fn random_password() -> String {
 
 
 
-#[deriving(Copy, Eq, PartialEq)]
+#[derive(Copy, Eq, PartialEq)]
 pub struct PasswordHash([u8; 32]);
 
 impl PasswordHash {
@@ -79,7 +79,7 @@ impl SharedSecret {
 
 
 
-#[deriving(Copy, Eq, PartialEq)]
+#[derive(Copy, Eq, PartialEq)]
 pub enum Nonce {
 	Mine([u8; 24]),
 	Hers([u8; 24])
@@ -96,7 +96,7 @@ impl Nonce {
 
 
 
-#[deriving(Copy)]
+#[derive(Copy)]
 pub struct CryptoBox;
 
 impl CryptoBox {

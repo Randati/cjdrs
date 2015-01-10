@@ -6,11 +6,11 @@ use identity::{PublicKey, PUB_KEY_SIZE};
 use util::BigEndian;
 use debug::as_hex;
 
-#[cfg(test)] pub const CRYPTOAUTH_HEADER_LENGTH: uint = 120;
+#[cfg(test)] pub const CRYPTOAUTH_HEADER_LENGTH: usize = 120;
 
 
 
-#[deriving(Copy, Clone, Eq, PartialEq)]
+#[derive(Copy, Clone, Eq, PartialEq)]
 #[repr(packed)]
 pub struct Challenge {
 	challenge_type: u8,
@@ -29,7 +29,7 @@ impl Challenge {
 	}
 }
 
-#[deriving(Copy, Clone, Eq, PartialEq)]
+#[derive(Copy, Clone, Eq, PartialEq)]
 #[repr(packed)]
 pub struct CryptoAuthHeader {
 	stage: BigEndian<u32>,
