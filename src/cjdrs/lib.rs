@@ -1,6 +1,3 @@
-#![feature(globs)]
-#![feature(macro_rules)]
-
 #[cfg(test)] extern crate test;
 extern crate mio;
 extern crate sodiumoxide;
