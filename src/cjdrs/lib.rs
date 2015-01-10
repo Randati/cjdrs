@@ -1,3 +1,5 @@
+#![allow(unstable)]
+
 #[cfg(test)] extern crate test;
 extern crate mio;
 extern crate sodiumoxide;

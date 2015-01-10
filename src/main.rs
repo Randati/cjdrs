@@ -1,3 +1,5 @@
+#![allow(unstable)]
+
 extern crate cjdrs;
 extern crate mio;
 extern crate "rustc-serialize" as rustc_serialize;
