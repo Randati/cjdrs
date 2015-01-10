@@ -144,6 +144,12 @@ impl fmt::String for Address {
 	}
 }
 
+impl fmt::Show for Address {
+	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+		write!(f, "{}", self)
+	}
+}
+
 
 #[cfg(test)]
 mod tests {

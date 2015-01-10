@@ -7,7 +7,7 @@ use util::BigEndian;
 
 
 
-#[derive(Copy, Clone, Eq, PartialEq)]
+#[derive(Show, Copy, Clone, Eq, PartialEq)]
 #[repr(packed)]
 pub struct TunHeader {
 	_unused: BigEndian<u16>,

@@ -9,6 +9,7 @@ use packet;
 use Task;
 
 
+#[derive(Show)]
 pub struct Tun {
 	tun: TunTap,
 	io_desc: mio::IoDesc

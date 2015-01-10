@@ -1,3 +1,4 @@
+use std::fmt;
 use sodiumoxide::crypto::asymmetricbox::curve25519xsalsa20poly1305 as crypto_box;
 use sodiumoxide::crypto::scalarmult::curve25519;
 use sodiumoxide::crypto::hash::sha256;
@@ -23,7 +24,7 @@ pub fn random_password() -> String {
 
 
 
-#[derive(Copy, Eq, PartialEq)]
+#[derive(Show, Copy, Eq, PartialEq)]
 pub struct PasswordHash([u8; 32]);
 
 impl PasswordHash {
@@ -77,9 +78,15 @@ impl SharedSecret {
 	}
 }
 
+impl fmt::Show for SharedSecret {
+	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+		write!(f, "SharedSecret({:?})", self.get_key().as_slice())
+	}
+}
 
 
-#[derive(Copy, Eq, PartialEq)]
+
+#[derive(Show, Copy, Eq, PartialEq)]
 pub enum Nonce {
 	Mine([u8; 24]),
 	Hers([u8; 24])
@@ -96,7 +103,7 @@ impl Nonce {
 
 
 
-#[derive(Copy)]
+#[derive(Show, Copy)]
 pub struct CryptoBox;
 
 impl CryptoBox {

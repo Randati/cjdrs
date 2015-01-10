@@ -10,6 +10,7 @@ use Task;
 use packet;
 
 
+#[derive(Show)]
 pub struct Udp {
 	send_sock: UdpSocket,
 	recv_sock: UdpSocket

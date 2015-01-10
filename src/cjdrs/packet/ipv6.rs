@@ -7,7 +7,7 @@ use util::BigEndian;
 
 
 
-#[derive(Copy, Clone, Eq, PartialEq)]
+#[derive(Show, Copy, Clone, Eq, PartialEq)]
 #[repr(packed)]
 pub struct IPv6Header {
 	version_class_flow: BigEndian<u16>,

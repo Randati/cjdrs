@@ -60,6 +60,12 @@ impl fmt::String for Route {
 	}
 }
 
+impl fmt::Show for Route {
+	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+		write!(f, "{}", self)
+	}
+}
+
 
 
 #[cfg(test)]
