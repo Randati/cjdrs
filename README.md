@@ -13,9 +13,9 @@ cjdrs will be an implementation of the [cjdns](https://github.com/cjdelisle/cjdn
 curl -s https://static.rust-lang.org/rustup.sh | sudo sh
 
 # Install libsodium
-wget https://download.libsodium.org/libsodium/releases/libsodium-1.0.1.tar.gz
-tar -zxvf libsodium-1.0.1.tar.gz
-cd libsodium-1.0.1
+wget https://download.libsodium.org/libsodium/releases/libsodium-1.0.2.tar.gz
+tar -zxvf libsodium-1.0.2.tar.gz
+cd libsodium-1.0.2
 ./configure --prefix=/usr
 make && make check
 sudo make install

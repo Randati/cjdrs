@@ -56,7 +56,7 @@ impl<'a> mio::Handler<usize, ()> for EventHandler<'a> {
 
 		let mut buffer = [0u8; 1500];
 
-		let device_idx = token.as_uint();
+		let device_idx = token.as_usize();
 		let maybe_task = self.devices[device_idx].receive(&mut buffer);
 
 		if let Some(task) = maybe_task {
