@@ -11,7 +11,7 @@ extern crate docopt;
 #[cfg(not(test))] use cjdrs::CjdrsResult;
 #[cfg(not(test))] use cjdrs::Config;
 #[cfg(not(test))] use cjdrs::EventHandler;
-#[cfg(not(test))] use cjdrs::interface::{self, NetInterface};
+#[cfg(not(test))] use cjdrs::device::{self, NetDevice};
 #[cfg(not(test))] use cjdrs::Router;
 #[cfg(not(test))] use cjdrs::{PrivateKey, PrivateIdentity};
 
@@ -96,17 +96,17 @@ fn run_cjdrs(config: &Config) -> CjdrsResult<()> {
 	println!("Address:    {}", my_identity.address);
 	
 
-	// Turn on interfaces
-	let tun_interface = interface::Tun::new(
+	// Turn on devices
+	let tun_device = device::Tun::new(
 		config.tunDevice.as_slice(),
 		&my_identity.address);
-	println!("Opened tun device '{}'", tun_interface.get_name());
+	println!("Opened tun device '{}'", tun_device.get_name());
 
-	let udp_interface = try!(interface::Udp::create(config.udpBind.as_slice()));
+	let udp_device = try!(device::Udp::create(config.udpBind.as_slice()));
 
-	let interfaces: Vec<Box<NetInterface>> = vec![
-		Box::new(tun_interface) as Box<NetInterface>,
-		Box::new(udp_interface) as Box<NetInterface>,
+	let devices: Vec<Box<NetDevice>> = vec![
+		Box::new(tun_device) as Box<NetDevice>,
+		Box::new(udp_device) as Box<NetDevice>,
 	];
 
 
@@ -118,7 +118,7 @@ fn run_cjdrs(config: &Config) -> CjdrsResult<()> {
 	
 	let event_handler = EventHandler::new(
 		my_identity,
-		interfaces,
+		devices,
 		router);
 
 	try!(event_handler.register_handlers(&mut mio_loop));

@@ -1,7 +1,7 @@
 use mio;
 use crypto::{PasswordHash, SharedSecret};
 use debug::as_hex;
-use interface::NetInterface;
+use device::NetDevice;
 use packet;
 use PrivateIdentity;
 use Router;
@@ -25,26 +25,26 @@ pub trait EventReceiver {
 // #[derive(Show)]
 pub struct EventHandler<'a> {
 	my_identity: PrivateIdentity,
-	interfaces: Vec<Box<NetInterface + 'a>>,
+	devices: Vec<Box<NetDevice + 'a>>,
 	router: Router
 }
 
 impl<'a> EventHandler<'a> {
 	pub fn new(my_identity: PrivateIdentity,
-	           interfaces: Vec<Box<NetInterface + 'a>>,
+	           devices: Vec<Box<NetDevice + 'a>>,
 	           router: Router) -> EventHandler<'a> {
 
 		EventHandler {
 			my_identity: my_identity,
-			interfaces: interfaces,
+			devices: devices,
 			router: router
 		}
 	}
 
 	pub fn register_handlers(&self, event_loop: &mut mio::EventLoop<usize, ()>)
 	                         -> mio::MioResult<()> {
-		for (i, interface) in self.interfaces.iter().enumerate() {
-			try!(interface.register(event_loop, mio::Token(i)));
+		for (i, device) in self.devices.iter().enumerate() {
+			try!(device.register(event_loop, mio::Token(i)));
 		}
 		Ok(())
 	}
@@ -56,8 +56,8 @@ impl<'a> mio::Handler<usize, ()> for EventHandler<'a> {
 
 		let mut buffer = [0u8; 1500];
 
-		let interface_idx = token.as_uint();
-		let maybe_task = self.interfaces[interface_idx].receive(&mut buffer);
+		let device_idx = token.as_uint();
+		let maybe_task = self.devices[device_idx].receive(&mut buffer);
 
 		if let Some(task) = maybe_task {
 			match task {

@@ -1,10 +1,12 @@
 use std::ffi::CString;
 use std::os::unix::prelude::AsRawFd;
 use mio;
+use mio::net::SockAddr;
 use tuntap::{TunTap, Tun};
 use Address;
+use CjdrsResult;
 use EventReceiver;
-use NetInterface;
+use NetDevice;
 use packet;
 use Task;
 
@@ -41,7 +43,13 @@ impl Tun {
 	}
 }
 
-impl NetInterface for Tun {
+impl NetDevice for Tun {
+	fn send_message(&mut self, message: &[u8], to: Option<&SockAddr>) -> CjdrsResult<()> {
+		assert!(to.is_none());
+
+		Ok(try!(self.tun.write(message)))
+	}
+
 	fn receive_message<'a>(&'a mut self, buffer: &'a mut [u8]) -> Option<Task> {
 		let data_slice = self.tun.read(buffer).ok().expect("Reading did not succeed");
 		let packet = packet::Tun::from_buffer(data_slice);
@@ -52,7 +60,7 @@ impl NetInterface for Tun {
 				Some(Task::HandleOutgoingPacket(*ipv6_packet))
 			},
 			Err(e) => {
-				println!("Received an invalid packet from tun interface: {}", e);
+				println!("Received an invalid packet from tun device: {}", e);
 				None
 			}
 		}

@@ -15,7 +15,7 @@ pub use identity::{
 	PublicIdentity,
 	PrivateKey,
 	PublicKey};
-pub use interface::NetInterface;
+pub use device::NetDevice;
 pub use route::Route;
 pub use router::Router;
 pub use util::debug;
@@ -24,7 +24,7 @@ mod macros;
 
 pub mod crypto;
 pub mod encoding_scheme;
-pub mod interface;
+pub mod device;
 pub mod packet;
 pub mod util;
 
