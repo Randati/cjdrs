@@ -1,3 +1,4 @@
+use std::time::duration::Duration;
 use mio;
 use crypto::{PasswordHash, SharedSecret};
 use debug::as_hex;
@@ -16,7 +17,7 @@ pub enum Task<'a> {
 
 pub trait EventReceiver {
 	fn register(&self, event_loop: &mut mio::EventLoop<usize, ()>, token: mio::Token)
-	           -> mio::MioResult<()>;
+	            -> mio::MioResult<()>;
 	fn receive<'a>(&'a mut self, buffer: &'a mut [u8]) -> Option<Task>;
 }
 
@@ -46,11 +47,18 @@ impl<'a> EventHandler<'a> {
 		for (i, device) in self.devices.iter().enumerate() {
 			try!(device.register(event_loop, mio::Token(i)));
 		}
+		event_loop.timeout(1000, Duration::milliseconds(0)).unwrap();
 		Ok(())
 	}
 }
 
 impl<'a> mio::Handler<usize, ()> for EventHandler<'a> {
+	fn timeout(&mut self, event_loop: &mut mio::EventLoop<usize, ()>, timeout: usize) {
+		assert_eq!(timeout, 1000);
+	
+		event_loop.timeout(1000, Duration::milliseconds(1000)).unwrap();
+	}
+	
 	fn readable(&mut self, _event_loop: &mut mio::EventLoop<usize, ()>,
 	            token: mio::Token, _hint: mio::event::ReadHint) {
 
