@@ -54,13 +54,13 @@ impl Route {
 	}
 }
 
-impl fmt::String for Route {
+impl fmt::Display for Route {
 	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
 		write!(f, "{:064b}", self.bits)
 	}
 }
 
-impl fmt::Show for Route {
+impl fmt::Debug for Route {
 	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
 		write!(f, "{}", self)
 	}

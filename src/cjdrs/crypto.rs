@@ -24,7 +24,7 @@ pub fn random_password() -> String {
 
 
 
-#[derive(Show, Copy, Eq, PartialEq)]
+#[derive(Debug, Copy, Eq, PartialEq)]
 pub struct PasswordHash([u8; 32]);
 
 impl PasswordHash {
@@ -78,7 +78,7 @@ impl SharedSecret {
 	}
 }
 
-impl fmt::Show for SharedSecret {
+impl fmt::Debug for SharedSecret {
 	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
 		write!(f, "SharedSecret({:?})", self.get_key().as_slice())
 	}
@@ -86,7 +86,7 @@ impl fmt::Show for SharedSecret {
 
 
 
-#[derive(Show, Copy, Eq, PartialEq)]
+#[derive(Debug, Copy, Eq, PartialEq)]
 pub enum Nonce {
 	Mine([u8; 24]),
 	Hers([u8; 24])
@@ -103,7 +103,7 @@ impl Nonce {
 
 
 
-#[derive(Show, Copy)]
+#[derive(Debug, Copy)]
 pub struct CryptoBox;
 
 impl CryptoBox {

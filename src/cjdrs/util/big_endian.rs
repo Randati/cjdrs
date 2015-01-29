@@ -2,7 +2,7 @@ use std::fmt;
 use std::num::Int;
 
 #[derive(Copy, Clone, Eq, PartialEq)]
-pub struct BigEndian<T: Int + fmt::Show>(T);
+pub struct BigEndian<T: Int + fmt::Debug>(T);
 
 impl<T: Int> BigEndian<T> {
 	#[inline]
@@ -16,7 +16,7 @@ impl<T: Int> BigEndian<T> {
 	}
 }
 
-impl<T: Int + fmt::Show> fmt::Show for BigEndian<T> {
+impl<T: Int + fmt::Debug> fmt::Debug for BigEndian<T> {
 	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
 		write!(f, "{:?}", self.val())
 	}

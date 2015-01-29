@@ -20,6 +20,7 @@ use CjdrsError::{
 
 pub type CjdrsResult<T> = Result<T, CjdrsError>;
 
+#[derive(Debug)]
 pub enum CjdrsError {
 	ConfigAlreadyExists(Path),
 	InvalidPrivateKey(Option<hex::FromHexError>),
@@ -50,43 +51,6 @@ impl error::Error for CjdrsError {
 		}
 	}
 
-	fn detail(&self) -> Option<String> {
-		match *self {
-			ConfigAlreadyExists(ref path) =>
-				Some(format!("Path '{}'", path.display())),
-
-			InvalidPrivateKey(Some(ref e)) =>
-				Some(format!("{:?}", e)),
-
-			InvalidPrivateKey(None) =>
-				Some(format!("Private key must be {} characters long", PRIV_KEY_SIZE * 2)),
-			
-			InvalidPublicKey =>
-				Some("Public key must be 54 character base32 encoded string including '.k'".to_string()),
-			
-			NoAddressForPrivateKey(ref k) =>
-				Some(format!("Private key '{}'", k)),
-
-			NoAddressForPublicKey(ref k) =>
-				Some(format!("Public key '{}'", k)),
-
-			InvalidBindAddress(ref s) =>
-				Some(format!("Bind address '{}' is invalid", s)),
-			
-			JsonDecodingError(ref e) =>
-				Some(format!("{:?}", e)),
-			
-			MioError(ref e) =>
-				Some(format!("{:?}", e)),
-			
-			FmtError(ref e) =>
-				Some(format!("{:?}", e)),
-
-			IoError(ref e) =>
-				Some(format!("{:?}", e)),
-		}
-	}
-
 	fn cause(&self) -> Option<&error::Error> {
 		match *self {
 			JsonDecodingError(ref e) => Some(e as &error::Error),
@@ -96,12 +60,43 @@ impl error::Error for CjdrsError {
 	}
 }
 
-
-impl fmt::Show for CjdrsError {
+impl fmt::Display for CjdrsError {
 	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-		match error::Error::detail(self) {
-			Some(detail) => write!(f, "{}: {}", error::Error::description(self), detail),
-			None         => write!(f, "{}", error::Error::description(self)),
+		try!(write!(f, "{}. ", error::Error::description(self)));
+
+		match *self {
+			ConfigAlreadyExists(ref path) =>
+				write!(f, "Path '{}'", path.display()),
+
+			InvalidPrivateKey(Some(ref e)) =>
+				write!(f, "{:?}", e),
+
+			InvalidPrivateKey(None) =>
+				write!(f, "Private key must be {} characters long", PRIV_KEY_SIZE * 2),
+			
+			InvalidPublicKey =>
+				write!(f, "Public key must be 54 character base32 encoded string including '.k'"),
+			
+			NoAddressForPrivateKey(ref k) =>
+				write!(f, "Private key '{}'", k),
+
+			NoAddressForPublicKey(ref k) =>
+				write!(f, "Public key '{}'", k),
+
+			InvalidBindAddress(ref s) =>
+				write!(f, "Bind address '{}' is invalid", s),
+			
+			JsonDecodingError(ref e) =>
+				write!(f, "{:?}", e),
+			
+			MioError(ref e) =>
+				write!(f, "{:?}", e),
+			
+			FmtError(ref e) =>
+				write!(f, "{:?}", e),
+
+			IoError(ref e) =>
+				write!(f, "{:?}", e),
 		}
 	}
 }

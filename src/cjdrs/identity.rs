@@ -12,7 +12,7 @@ pub const PRIV_KEY_SIZE: usize = 32;
 pub const PUB_KEY_SIZE: usize = 32;
 
 
-#[derive(Show, Copy, Clone, Eq, PartialEq, Hash)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
 pub struct PrivateKey([u8; PRIV_KEY_SIZE]);
 
 impl PrivateKey {
@@ -44,14 +44,14 @@ impl PrivateKey {
 	}
 }
 
-impl fmt::String for PrivateKey {
+impl fmt::Display for PrivateKey {
 	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
 		write!(f, "{}", self.as_string())
 	}
 }
 
 
-#[derive(Show, Copy, Clone, Eq, PartialEq, Hash)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
 pub struct PublicKey([u8; PUB_KEY_SIZE]);
 
 impl PublicKey {
@@ -98,7 +98,7 @@ impl PublicKey {
 	}
 }
 
-impl fmt::String for PublicKey {
+impl fmt::Display for PublicKey {
 	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
 		write!(f, "{}", self.as_string())
 	}
@@ -106,7 +106,7 @@ impl fmt::String for PublicKey {
 
 
 
-#[derive(Show, Copy, Clone, Eq, PartialEq, Hash)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
 pub struct PrivateIdentity {
 	pub private_key: PrivateKey,
 	pub public_key: PublicKey,
@@ -145,7 +145,7 @@ impl PrivateIdentity {
 }
 
 
-#[derive(Show, Copy, Clone, Eq, PartialEq, Hash)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
 pub struct PublicIdentity {
 	pub public_key: PublicKey,
 	pub address: Address

@@ -33,7 +33,7 @@ Options:
 Configuration file defaults to 'cjdrs.conf' if not given.
 ";
 
-#[derive(RustcDecodable, Show)]
+#[derive(RustcDecodable, Debug)]
 struct Args {
 	cmd_init: bool,
 	cmd_run: bool,
@@ -46,7 +46,7 @@ fn main() {
 		os::set_exit_status(1);
 	
 		let mut stderr = io::stdio::stderr();
-		writeln!(&mut stderr, "Error: {:?}", e).unwrap();
+		writeln!(&mut stderr, "Error: {}", e).unwrap();
 	}
 }
 

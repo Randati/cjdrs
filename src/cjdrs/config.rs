@@ -7,7 +7,7 @@ use PrivateIdentity;
 use CjdrsResult;
 use CjdrsError;
 
-#[derive(Show, RustcEncodable, RustcDecodable)]
+#[derive(Debug, RustcEncodable, RustcDecodable)]
 #[allow(non_snake_case)]
 pub struct Config {
 	pub privateKey: String,

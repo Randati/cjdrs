@@ -8,7 +8,7 @@ use PrivateIdentity;
 use Router;
 
 
-#[derive(Show)]
+#[derive(Debug)]
 pub enum Task<'a> {
 	HandleIncomingPacket(packet::CryptoAuth<'a>),
 	HandleOutgoingPacket(packet::IPv6<'a>)
@@ -22,8 +22,7 @@ pub trait EventReceiver {
 }
 
 
-// TODO Show blocked by https://github.com/rust-lang/rust/issues/20676
-// #[derive(Show)]
+#[derive(Debug)]
 pub struct EventHandler<'a> {
 	my_identity: PrivateIdentity,
 	devices: Vec<Box<NetDevice + 'a>>,

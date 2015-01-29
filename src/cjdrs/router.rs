@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use Address;
 use Route;
 
-#[derive(Show)]
+#[derive(Debug)]
 pub struct Router {
 	node_store: HashMap<Address, Route>
 }
