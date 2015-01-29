@@ -13,6 +13,7 @@ use CjdrsError::{
 	NoAddressForPublicKey,
 	InvalidBindAddress,
 	JsonDecodingError,
+	JsonEncodingError,
 	MioError,
 	FmtError,
 	IoError,
@@ -29,6 +30,7 @@ pub enum CjdrsError {
 	NoAddressForPublicKey(PublicKey),
 	InvalidBindAddress(String),
 	JsonDecodingError(json::DecoderError),
+	JsonEncodingError(json::EncoderError),
 	MioError(mio::MioError),
 	FmtError(fmt::Error),
 	IoError(old_io::IoError),
@@ -45,6 +47,7 @@ impl error::Error for CjdrsError {
 			NoAddressForPublicKey(..) => "Public key has no valid IP address",
 			InvalidBindAddress(..) => "Invalid bind address",
 			JsonDecodingError(..) => "JSON decoding error",
+			JsonEncodingError(..) => "JSON encoding error",
 			MioError(..) => "Event handler error",
 			FmtError(..) => "Formatting error",
 			IoError(..) => "I/O error",
@@ -54,6 +57,7 @@ impl error::Error for CjdrsError {
 	fn cause(&self) -> Option<&error::Error> {
 		match *self {
 			JsonDecodingError(ref e) => Some(e as &error::Error),
+			JsonEncodingError(ref e) => Some(e as &error::Error),
 			IoError(ref e) => Some(e as &error::Error),
 			_ => None,
 		}
@@ -87,6 +91,9 @@ impl fmt::Display for CjdrsError {
 				write!(f, "Bind address '{}' is invalid", s),
 			
 			JsonDecodingError(ref e) =>
+				write!(f, "{:?}", e),
+
+			JsonEncodingError(ref e) =>
 				write!(f, "{:?}", e),
 			
 			MioError(ref e) =>
@@ -129,5 +136,12 @@ impl error::FromError<mio::MioError> for CjdrsError {
 impl error::FromError<json::DecoderError> for CjdrsError {
 	fn from_error(e: json::DecoderError) -> CjdrsError {
 		CjdrsError::JsonDecodingError(e)
+	}
+}
+
+
+impl error::FromError<json::EncoderError> for CjdrsError {
+	fn from_error(e: json::EncoderError) -> CjdrsError {
+		CjdrsError::JsonEncodingError(e)
 	}
 }

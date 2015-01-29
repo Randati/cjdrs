@@ -1,5 +1,5 @@
 use rustc_serialize::Encodable;
-use rustc_serialize::json::{self, PrettyEncoder};
+use rustc_serialize::json::{self, Encoder};
 use std::old_io::File;
 use std::old_io::fs::PathExtensions;
 use crypto::random_password;
@@ -36,7 +36,7 @@ impl Config {
 		let encoded_str = {
 			let mut s = String::new();
 			{
-				let mut encoder = PrettyEncoder::new(&mut s);
+				let mut encoder = Encoder::new_pretty(&mut s);
 				try!(self.encode(&mut encoder));
 			}
 			s
