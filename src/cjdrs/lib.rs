@@ -1,4 +1,4 @@
-#![allow(unstable)]
+#![feature(collections, core, hash, io, std_misc)]
 
 #[cfg(test)] extern crate test;
 extern crate mio;

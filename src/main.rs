@@ -1,22 +1,23 @@
-#![allow(unstable)]
+#![cfg(not(test))]
+#![feature(core, io, os, path)]
+
 
 extern crate cjdrs;
 extern crate mio;
 extern crate "rustc-serialize" as rustc_serialize;
 extern crate docopt;
 
-#[cfg(not(test))] use std::{os, io};
-#[cfg(not(test))] use docopt::Docopt;
-#[cfg(not(test))] use cjdrs::CjdrsError;
-#[cfg(not(test))] use cjdrs::CjdrsResult;
-#[cfg(not(test))] use cjdrs::Config;
-#[cfg(not(test))] use cjdrs::EventHandler;
-#[cfg(not(test))] use cjdrs::device::{self, NetDevice};
-#[cfg(not(test))] use cjdrs::Router;
-#[cfg(not(test))] use cjdrs::{PrivateKey, PrivateIdentity};
+use std::{os, old_io};
+use docopt::Docopt;
+use cjdrs::CjdrsError;
+use cjdrs::CjdrsResult;
+use cjdrs::Config;
+use cjdrs::EventHandler;
+use cjdrs::device::{self, NetDevice};
+use cjdrs::Router;
+use cjdrs::{PrivateKey, PrivateIdentity};
 
 
-#[cfg(not(test))]
 static USAGE: &'static str = "
 Usage: cjdrs --help
        cjdrs init [--cfg=<file>]
@@ -40,18 +41,16 @@ struct Args {
 	flag_cfg: String,
 }
 
-#[cfg(not(test))]
 fn main() {
 	if let Err(e) = choose_command() {
 		os::set_exit_status(1);
 	
-		let mut stderr = io::stdio::stderr();
+		let mut stderr = old_io::stdio::stderr();
 		writeln!(&mut stderr, "Error: {}", e).unwrap();
 	}
 }
 
 
-#[cfg(not(test))]
 fn choose_command() -> CjdrsResult<()> {
 	let args: Args = Docopt::new(USAGE).and_then(|d| d.decode()).unwrap_or_else(|e| e.exit());
 	let config_path = Path::new(args.flag_cfg);
@@ -68,7 +67,6 @@ fn choose_command() -> CjdrsResult<()> {
 }
 
 
-#[cfg(not(test))]
 fn init_config(config_path: &Path) -> CjdrsResult<()> {
 	let identity = PrivateIdentity::generate();
 		
@@ -83,7 +81,6 @@ fn init_config(config_path: &Path) -> CjdrsResult<()> {
 }
 
 
-#[cfg(not(test))]
 fn run_cjdrs(config: &Config) -> CjdrsResult<()> {
 	// Create identity
 	let my_identity = {

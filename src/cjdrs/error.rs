@@ -1,4 +1,4 @@
-use std::{io, error, fmt};
+use std::{old_io, error, fmt};
 use mio;
 use rustc_serialize::{hex, json};
 use identity::PRIV_KEY_SIZE;
@@ -31,7 +31,7 @@ pub enum CjdrsError {
 	JsonDecodingError(json::DecoderError),
 	MioError(mio::MioError),
 	FmtError(fmt::Error),
-	IoError(io::IoError),
+	IoError(old_io::IoError),
 }
 
 
@@ -102,8 +102,8 @@ impl fmt::Display for CjdrsError {
 }
 
 
-impl error::FromError<io::IoError> for CjdrsError {
-	fn from_error(e: io::IoError) -> CjdrsError {
+impl error::FromError<old_io::IoError> for CjdrsError {
+	fn from_error(e: old_io::IoError) -> CjdrsError {
 		CjdrsError::IoError(e)
 	}
 }
