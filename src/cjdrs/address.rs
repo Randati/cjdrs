@@ -41,7 +41,7 @@ impl Address {
 	pub fn from_public_key(public_key: &PublicKey) -> Option<Address> {
 		let first_sha = sha512::hash(public_key.as_slice());
 		let second_sha = sha512::hash(first_sha.as_slice());
-		let raw_address = second_sha.as_slice().slice_to(ADDRESS_SIZE);
+		let raw_address = &second_sha.as_slice()[..ADDRESS_SIZE];
 		Address::from_slice(raw_address)
 	}
 
@@ -53,64 +53,64 @@ impl Address {
 	#[inline]
 	pub fn as_u64_be(&self) -> [u64; 2] {
 		[
-			unsafe { *mem::transmute::<*const u8, *const u64>(self.bytes.slice_from(0).as_ptr()) }.to_be(),
-			unsafe { *mem::transmute::<*const u8, *const u64>(self.bytes.slice_from(8).as_ptr()) }.to_be(),
+			unsafe { *mem::transmute::<*const u8, *const u64>((&self.bytes[0..]).as_ptr()) }.to_be(),
+			unsafe { *mem::transmute::<*const u8, *const u64>((&self.bytes[8..]).as_ptr()) }.to_be(),
 		]
 	}
 
 	#[inline]
 	pub fn as_u32_be(&self) -> [u32; 4] {
 		[
-			unsafe { *mem::transmute::<*const u8, *const u32>(self.bytes.slice_from( 0).as_ptr()) }.to_be(),
-			unsafe { *mem::transmute::<*const u8, *const u32>(self.bytes.slice_from( 4).as_ptr()) }.to_be(),
-			unsafe { *mem::transmute::<*const u8, *const u32>(self.bytes.slice_from( 8).as_ptr()) }.to_be(),
-			unsafe { *mem::transmute::<*const u8, *const u32>(self.bytes.slice_from(12).as_ptr()) }.to_be(),
+			unsafe { *mem::transmute::<*const u8, *const u32>((&self.bytes[ 0..]).as_ptr()) }.to_be(),
+			unsafe { *mem::transmute::<*const u8, *const u32>((&self.bytes[ 4..]).as_ptr()) }.to_be(),
+			unsafe { *mem::transmute::<*const u8, *const u32>((&self.bytes[ 8..]).as_ptr()) }.to_be(),
+			unsafe { *mem::transmute::<*const u8, *const u32>((&self.bytes[12..]).as_ptr()) }.to_be(),
 		]
 	}
 
 	#[inline]
 	pub fn as_u16_be(&self) -> [u16; 8] {
 		[
-			unsafe { *mem::transmute::<*const u8, *const u16>(self.bytes.slice_from( 0).as_ptr()) }.to_be(),
-			unsafe { *mem::transmute::<*const u8, *const u16>(self.bytes.slice_from( 2).as_ptr()) }.to_be(),
-			unsafe { *mem::transmute::<*const u8, *const u16>(self.bytes.slice_from( 4).as_ptr()) }.to_be(),
-			unsafe { *mem::transmute::<*const u8, *const u16>(self.bytes.slice_from( 6).as_ptr()) }.to_be(),
-			unsafe { *mem::transmute::<*const u8, *const u16>(self.bytes.slice_from( 8).as_ptr()) }.to_be(),
-			unsafe { *mem::transmute::<*const u8, *const u16>(self.bytes.slice_from(10).as_ptr()) }.to_be(),
-			unsafe { *mem::transmute::<*const u8, *const u16>(self.bytes.slice_from(12).as_ptr()) }.to_be(),
-			unsafe { *mem::transmute::<*const u8, *const u16>(self.bytes.slice_from(14).as_ptr()) }.to_be(),
+			unsafe { *mem::transmute::<*const u8, *const u16>((&self.bytes[ 0..]).as_ptr()) }.to_be(),
+			unsafe { *mem::transmute::<*const u8, *const u16>((&self.bytes[ 2..]).as_ptr()) }.to_be(),
+			unsafe { *mem::transmute::<*const u8, *const u16>((&self.bytes[ 4..]).as_ptr()) }.to_be(),
+			unsafe { *mem::transmute::<*const u8, *const u16>((&self.bytes[ 6..]).as_ptr()) }.to_be(),
+			unsafe { *mem::transmute::<*const u8, *const u16>((&self.bytes[ 8..]).as_ptr()) }.to_be(),
+			unsafe { *mem::transmute::<*const u8, *const u16>((&self.bytes[10..]).as_ptr()) }.to_be(),
+			unsafe { *mem::transmute::<*const u8, *const u16>((&self.bytes[12..]).as_ptr()) }.to_be(),
+			unsafe { *mem::transmute::<*const u8, *const u16>((&self.bytes[14..]).as_ptr()) }.to_be(),
 		]
 	}
 
 	#[inline]
 	pub fn as_u64_le(&self) -> [u64; 2] {
 		[
-			unsafe { *mem::transmute::<*const u8, *const u64>(self.bytes.slice_from(0).as_ptr()) }.to_le(),
-			unsafe { *mem::transmute::<*const u8, *const u64>(self.bytes.slice_from(8).as_ptr()) }.to_le(),
+			unsafe { *mem::transmute::<*const u8, *const u64>((&self.bytes[0..]).as_ptr()) }.to_le(),
+			unsafe { *mem::transmute::<*const u8, *const u64>((&self.bytes[8..]).as_ptr()) }.to_le(),
 		]
 	}
 
 	#[inline]
 	pub fn as_u32_le(&self) -> [u32; 4] {
 		[
-			unsafe { *mem::transmute::<*const u8, *const u32>(self.bytes.slice_from( 0).as_ptr()) }.to_le(),
-			unsafe { *mem::transmute::<*const u8, *const u32>(self.bytes.slice_from( 4).as_ptr()) }.to_le(),
-			unsafe { *mem::transmute::<*const u8, *const u32>(self.bytes.slice_from( 8).as_ptr()) }.to_le(),
-			unsafe { *mem::transmute::<*const u8, *const u32>(self.bytes.slice_from(12).as_ptr()) }.to_le(),
+			unsafe { *mem::transmute::<*const u8, *const u32>((&self.bytes[ 0..]).as_ptr()) }.to_le(),
+			unsafe { *mem::transmute::<*const u8, *const u32>((&self.bytes[ 4..]).as_ptr()) }.to_le(),
+			unsafe { *mem::transmute::<*const u8, *const u32>((&self.bytes[ 8..]).as_ptr()) }.to_le(),
+			unsafe { *mem::transmute::<*const u8, *const u32>((&self.bytes[12..]).as_ptr()) }.to_le(),
 		]
 	}
 
 	#[inline]
 	pub fn as_u16_le(&self) -> [u16; 8] {
 		[
-			unsafe { *mem::transmute::<*const u8, *const u16>(self.bytes.slice_from( 0).as_ptr()) }.to_le(),
-			unsafe { *mem::transmute::<*const u8, *const u16>(self.bytes.slice_from( 2).as_ptr()) }.to_le(),
-			unsafe { *mem::transmute::<*const u8, *const u16>(self.bytes.slice_from( 4).as_ptr()) }.to_le(),
-			unsafe { *mem::transmute::<*const u8, *const u16>(self.bytes.slice_from( 6).as_ptr()) }.to_le(),
-			unsafe { *mem::transmute::<*const u8, *const u16>(self.bytes.slice_from( 8).as_ptr()) }.to_le(),
-			unsafe { *mem::transmute::<*const u8, *const u16>(self.bytes.slice_from(10).as_ptr()) }.to_le(),
-			unsafe { *mem::transmute::<*const u8, *const u16>(self.bytes.slice_from(12).as_ptr()) }.to_le(),
-			unsafe { *mem::transmute::<*const u8, *const u16>(self.bytes.slice_from(14).as_ptr()) }.to_le(),
+			unsafe { *mem::transmute::<*const u8, *const u16>((&self.bytes[ 0..]).as_ptr()) }.to_le(),
+			unsafe { *mem::transmute::<*const u8, *const u16>((&self.bytes[ 2..]).as_ptr()) }.to_le(),
+			unsafe { *mem::transmute::<*const u8, *const u16>((&self.bytes[ 4..]).as_ptr()) }.to_le(),
+			unsafe { *mem::transmute::<*const u8, *const u16>((&self.bytes[ 6..]).as_ptr()) }.to_le(),
+			unsafe { *mem::transmute::<*const u8, *const u16>((&self.bytes[ 8..]).as_ptr()) }.to_le(),
+			unsafe { *mem::transmute::<*const u8, *const u16>((&self.bytes[10..]).as_ptr()) }.to_le(),
+			unsafe { *mem::transmute::<*const u8, *const u16>((&self.bytes[12..]).as_ptr()) }.to_le(),
+			unsafe { *mem::transmute::<*const u8, *const u16>((&self.bytes[14..]).as_ptr()) }.to_le(),
 		]
 	}
 

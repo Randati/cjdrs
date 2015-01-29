@@ -44,7 +44,7 @@ impl<'a> IPv6<'a> {
 		}
 
 
-		let data = buffer.slice_from(size_of::<IPv6Header>());
+		let data = &buffer[size_of::<IPv6Header>()..];
 
 		Ok(IPv6 {
 			slice: buffer,

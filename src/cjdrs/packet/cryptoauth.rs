@@ -51,7 +51,7 @@ impl<'a> CryptoAuth<'a> {
 		match stage_or_nonce.val() {
 			0 | 1 => {
 				let header: &CryptoAuthHeader = try!(buffer_to_type(buffer));
-				let data = buffer.slice_from(size_of::<CryptoAuthHeader>());
+				let data = &buffer[size_of::<CryptoAuthHeader>()..];
 
 				println!("");
 				println!("Stage:                  0x{:08X}", header.stage.val());

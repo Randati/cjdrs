@@ -78,7 +78,7 @@ impl PublicKey {
 			fail!(CjdrsError::InvalidPublicKey);
 		}
 
-		let hex_str = key_str.slice_to(52);
+		let hex_str = &key_str[..52];
 
 		match base32::decode(hex_str) {
 			Some(bytes) => {

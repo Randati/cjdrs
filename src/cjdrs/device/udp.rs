@@ -51,7 +51,7 @@ impl NetDevice for Udp {
 
 	fn receive_message<'a>(&'a mut self, buffer: &'a mut [u8]) -> Option<Task> {
 		let len = self.recv_sock.read_slice(buffer).unwrap().unwrap();
-		let data = buffer.slice_to(len);
+		let data = &buffer[..len];
 
 		match packet::CryptoAuth::from_buffer(data) {
 			Ok(ca_packet) => {

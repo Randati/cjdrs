@@ -33,7 +33,7 @@ impl<'a> Tun<'a> {
 		}
 
 		let payload = {
-			let data_slice = buffer.slice_from(size_of::<TunHeader>());
+			let data_slice = &buffer[size_of::<TunHeader>()..];
 			try!(packet::IPv6::from_buffer(data_slice))
 		};
 

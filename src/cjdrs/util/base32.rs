@@ -43,7 +43,7 @@ pub fn encode(bytes: &[u8]) -> String {
 			ascii_bytes[ ((buf[4] & 0b1111_1000) >> 3) as usize]
 		];
 
-		for &c in chars.slice_to(bytes_needed_to_encode(chunk.len())).iter() {
+		for &c in (&chars[..bytes_needed_to_encode(chunk.len())]).iter() {
 			match char::from_u32(c as u32) {
 				Some(c) => ret.push(c),
 				None => unreachable!()
@@ -83,7 +83,7 @@ pub fn decode(encoded: &str) -> Option<Vec<u8>> {
 			(buf[6] >> 2) | (buf[7] << 3)
 		];
 
-		ret.push_all(bytes.slice_to(bytes_needed_to_decode(chunk.len())));
+		ret.push_all(&bytes[..bytes_needed_to_decode(chunk.len())]);
 	}
 
 	Some(ret)
